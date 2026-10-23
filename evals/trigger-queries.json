@@ -160,6 +160,30 @@
     {
       "prompt": "Run an accessibility audit with screen reader testing on our checkout flow",
       "should_trigger": false
+    },
+    {
+      "prompt": "Our admin console has pulsing dots, transition-all everywhere and no visible focus ring. Clean it up and keep it from coming back",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Review this table screen from a screenshot. The numbers do not line up and the empty and error states look the same",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Set up the linter so it uses a quieter profile for our dashboard and a strict one for the marketing site",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Add tabular numbers to the invoice export script that writes a CSV",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Write the animation timing for our Rust game engine's menu transitions",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Design a brand colour palette and logo for a new bakery",
+      "should_trigger": false
     }
   ]
 }
