@@ -1011,6 +1011,47 @@ export const RULES = [
       return t && t.table && !t.covered ? [{ ...t.table, msg: 'right-aligned or numeric table cells, but no tabular figures anywhere in the project' }] : [];
     },
   },
+  {
+    id: 'cream-clay-palette', severity: 'P2', title: 'Warm cream ground with a clay accent',
+    hint: 'Choose the ground and accent from the product, not from the editorial default of cream paper with a terracotta accent.',
+    scan(ctx) {
+      if (ctx.kind === 'md' || /print/i.test(ctx.file)) return [];
+      let cream = 0, clay = false;
+      ctx.lines.forEach((l, i) => {
+        for (const m of l.matchAll(/(?<![&\w#])#[0-9a-fA-F]{6}\b|rgba?\(\s*\d+[\s,]+\d+[\s,]+\d+[^)]*\)/g)) {
+          const c = parseColor(m[0]);
+          if (!c || c[3] < 1) continue;
+          const { h, s } = hueSat(c), l2 = (Math.max(c[0], c[1], c[2]) + Math.min(c[0], c[1], c[2])) / 510;
+          if (h >= 35 && h <= 60 && s >= 0.15 && s <= 0.5 && l2 >= 0.93 && l2 <= 0.99 && !cream) cream = i + 1;
+          if (h >= 10 && h <= 30 && s >= 0.4 && l2 >= 0.25 && l2 <= 0.6) clay = true;
+        }
+      });
+      return cream && clay ? [{ line: cream, msg: 'warm off-white ground and a terracotta accent in the same file' }] : [];
+    },
+  },
+  {
+    id: 'aphoristic-cadence', severity: 'P2', title: 'Rebuttal-style slogans repeated in copy',
+    landing: true,
+    hint: 'Say what the product does in one plain sentence. Repeated "Not X. A Y." and "No X. No Y." endings read as generated.',
+    scan(ctx) {
+      if (ctx.kind === 'style') return [];
+      const RES = [/\bNot (?:a|an|the|just|only)\s+[\w'-]+(?: [\w'-]+){0,4}\.\s+(?:A|An|The|It's|It is|Just|Your|Our)\b/g, /\bNo [\w-]+(?: [\w-]+)?\.\s+No [\w-]+/g, /\bLess [\w-]+\.\s+More [\w-]+/g, /[a-z]{3}\.\s+Just [a-z]+/g];
+      let n = 0, first = 0;
+      ctx.lines.forEach((l, i) => {
+        for (const seg of segments(l, ctx.kind)) for (const re of RES) { const k = [...seg.matchAll(re)].length; if (k && !first) first = i + 1; n += k; }
+      });
+      return n >= 3 ? [{ line: first, msg: `${n} rebuttal-style slogans in one file` }] : [];
+    },
+  },
+  {
+    id: 'placeholder-person-data', severity: 'P2', title: 'Textbook placeholder names and addresses',
+    hint: 'Use realistic, varied sample data, or label the sample as sample data. Names like John Doe and Acme mark an unfinished screen.',
+    scan(ctx) {
+      if (ctx.kind === 'style' || /(^|\/)(?:fixtures?|mocks?|__mocks__|seeds?)\//i.test(ctx.file)) return [];
+      const re = /\b(?:John|Jane) (?:Doe|Smith)\b|\bAcme(?: (?:Inc|Corp|Co|Ltd|Corporation)\b\.?)?(?![\w-])|\bFirstname Lastname\b|\b123 Main St(?:reet)?\b/;
+      return eachLine(ctx, (l) => (/\bplaceholder\s*[=:]/.test(l) ? null : segments(l, ctx.kind).some((x) => re.test(x)) ? 'textbook placeholder person, company or address' : null));
+    },
+  },
 ];
 
 export const RULE_IDS = RULES.map((r) => r.id);

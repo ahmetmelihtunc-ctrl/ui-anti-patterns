@@ -489,3 +489,38 @@ project('tnum-no-table', [{ name: 'a.tsx', code: 'const k = <div className="text
 project('tnum-font-feature-settings', [{ name: 'a.tsx', code: TNUM_TABLE }, { name: 'a.css', code: 'td { font-feature-settings: "tnum"; }' }], [], ['missing-tabular-nums']);
 project('tnum-figure-face-config', [{ name: 'a.tsx', code: TNUM_TABLE }], [], ['missing-tabular-nums']);
 cases[cases.length - 1].config = { options: { figureFace: 'mono' } };
+
+/* cream-clay-palette */
+P('cream-tokens', 'a.css', ':root { --bg: #faf7f2; --accent: #c2410c; }', 'cream-clay-palette:1');
+P('cream-rgb-and-hex', 'a.css', 'body { background: rgb(245, 240, 230); }\n.cta { background: #b5532a; }', 'cream-clay-palette:1');
+P('cream-tailwind-arbitrary', 'a.tsx', 'const a = <main className="bg-[#f5f0e6]"><button className="bg-[#c2410c]">x</button></main>;', 'cream-clay-palette:1');
+N('cream-neutral-ground', 'a.css', ':root { --bg: #fafafa; --accent: #c2410c; }', 'cream-clay-palette');
+N('cream-alone', 'a.css', ':root { --bg: #faf7f2; --accent: #2563eb; }', 'cream-clay-palette');
+N('cream-clay-alone', 'a.css', ':root { --bg: #ffffff; --accent: #c2410c; }', 'cream-clay-palette');
+N('cream-gold-on-obsidian', 'a.css', ':root { --bg: #0a0a0a; --accent: #c9a227; }', 'cream-clay-palette');
+N('cream-amber-tint', 'a.css', '.note { background: #fffbeb; }\n.cta { background: #c2410c; }', 'cream-clay-palette');
+N('cream-print-stylesheet', 'print.css', 'body { background: #faf7f2; }\n.link { color: #c2410c; }', 'cream-clay-palette');
+N('cream-ignored', 'a.css', '/* ui-slop-ignore cream-clay-palette: matches the printed brand book */\n:root { --bg: #faf7f2; --accent: #c2410c; }', 'cream-clay-palette');
+
+/* aphoristic-cadence */
+P('aphor-three-pairs', 'a.tsx', 'const a = (\n  <section>\n    <h2>Not a dashboard. A command centre.</h2>\n    <p>No agents. No sidecars. No stress.</p>\n    <p>Less noise. More signal.</p>\n  </section>\n);', 'aphoristic-cadence:3');
+P('aphor-string-literals', 'a.tsx', 'const copy = [\n  "Not a toolbox. The toolbox.",\n  "No setup. No login.",\n  "Less clicking. More shipping.",\n];', 'aphoristic-cadence:2');
+P('aphor-markdown', 'a.md', 'Not a plugin. A platform.\n\nNo lock-in. No limits.\n\nLess overhead. More output.', 'aphoristic-cadence:1');
+N('aphor-single', 'a.tsx', 'const a = <h2>Not a dashboard. A command centre.</h2>;', 'aphoristic-cadence');
+N('aphor-two', 'a.tsx', 'const a = (\n  <section>\n    <h2>Not a dashboard. A command centre.</h2>\n    <p>Less noise. More signal.</p>\n  </section>\n);', 'aphoristic-cadence');
+N('aphor-error-text', 'a.tsx', 'const a = <p>Not found. Check the URL.</p>;', 'aphoristic-cadence');
+N('aphor-empty-states', 'a.tsx', 'const a = (\n  <div>\n    <p>No results. Try another filter.</p>\n    <p>No clusters. Connect one to start.</p>\n    <p>No alerts. You are up to date.</p>\n  </div>\n);', 'aphoristic-cadence');
+N('aphor-in-comment-and-code', 'a.tsx', '// Not a hack. A workaround. No time. No budget. Less code. More tests.\nconst x = notAThing();', 'aphoristic-cadence');
+N('aphor-ignored', 'a.tsx', '// ui-slop-ignore-file aphoristic-cadence: campaign copy approved by marketing\nconst a = (\n  <section>\n    <h2>Not a dashboard. A command centre.</h2>\n    <p>No agents. No sidecars.</p>\n    <p>Less noise. More signal.</p>\n  </section>\n);', 'aphoristic-cadence');
+
+/* placeholder-person-data */
+P('person-john-doe', 'a.tsx', 'const row = { owner: "John Doe", org: "Acme Inc" };', 'placeholder-person-data:1');
+P('person-jane-smith-text', 'a.tsx', 'const a = <td>Jane Smith</td>;', 'placeholder-person-data:1');
+P('person-address', 'a.tsx', 'const a = <p>123 Main Street, Springfield</p>;', 'placeholder-person-data:1');
+P('person-firstname', 'a.tsx', 'const a = <span>Firstname Lastname</span>;', 'placeholder-person-data:1');
+N('person-fixtures-dir', 'tests/fixtures/people.tsx', 'export const row = { owner: "John Doe", org: "Acme Inc" };', 'placeholder-person-data');
+N('person-mocks-dir', 'src/mocks/user.tsx', 'export const row = { owner: "Jane Doe" };', 'placeholder-person-data');
+N('person-input-placeholder', 'a.tsx', 'const a = <input placeholder="Jane Doe" />;', 'placeholder-person-data');
+N('person-similar-words', 'a.tsx', 'const a = <p>Johnson Doe Acmeist Acme-free zone</p>;', 'placeholder-person-data');
+N('person-comment-only', 'a.tsx', '// example owner John Doe\nconst a = <p>Owner</p>;', 'placeholder-person-data');
+N('person-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore placeholder-person-data: demo tenant for the sales sandbox\n  <td>Acme Inc</td>\n);', 'placeholder-person-data');

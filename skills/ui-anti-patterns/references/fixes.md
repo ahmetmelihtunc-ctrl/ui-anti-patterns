@@ -27,7 +27,7 @@ Tailwind. Replace `p-[13px]` with `p-3` or `p-4`.
 
 Give the label a real verb phrase and a visible focus state.
 
-## Colour (default-indigo, two-stop-gradient, gradient-text)
+## Colour (default-indigo, two-stop-gradient, gradient-text, cream-clay-palette)
 
 ```css
 /* before */
@@ -37,6 +37,8 @@ Give the label a real verb phrase and a visible focus state.
 .hero { background: var(--surface-subtle); }
 .hero h1 { color: var(--text-strong); font-size: 2rem; font-weight: 600; }
 ```
+
+For a cream ground with a clay accent (cream-clay-palette), derive both colours from the brand and the use case. A neutral ground with one considered accent is the safe default for tools.
 
 Tailwind. Replace `bg-gradient-to-r from-purple-500 to-blue-500` with a token such as `bg-surface`. Replace `bg-clip-text text-transparent` with `text-strong`.
 
@@ -177,7 +179,7 @@ button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 Tailwind. Pair `outline-none` only with `focus-visible:ring-2 focus-visible:ring-offset-2`, and give numeric cells `text-right tabular-nums`. Use a fixed number of decimals per column so the digits line up.
 
-## Copy (em-dash, buzzword, invented-metric, placeholder-copy, punctuation rules)
+## Copy (em-dash, buzzword, invented-metric, placeholder-copy, aphoristic-cadence, placeholder-person-data, punctuation rules)
 
 | Before | After |
 |---|---|
@@ -188,6 +190,8 @@ Tailwind. Pair `outline-none` only with `focus-visible:ring-2 focus-visible:ring
 | `Status: ready to deploy` | Field caption "Status" with the value "Ready to deploy" |
 | `Cluster - production` | `Production cluster` |
 | `View all scans ->` | `View all scans` |
+| `Not a dashboard. A command centre.` (repeated in three sections) | `See every failing check across your clusters in one list` |
+| `John Doe, Acme Inc` | `Selin Aydin, Kuzey Lojistik` (varied, realistic, or labelled as sample data) |
 
 For empty states, name the next action. "No scans yet. Add a cluster to run the first one."
 

@@ -26,6 +26,13 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **Fix.** Solid colour. Create emphasis with size and weight.
 **Exceptions.** A loading shimmer on placeholder text. Mark it with a reason.
 
+### cream-clay-palette (P2)
+**What.** A warm off-white ground (hue 35 to 60, lightness 0.93 to 0.99, moderate saturation, for example `#faf7f2`) together with a terracotta or clay accent (hue 10 to 30, for example `#c2410c`) in the same file.
+**Why.** Cream paper with a clay accent is the current editorial default of generated pages. Either colour alone is fine. The pair is the tell.
+**Detect.** Both colours in one file. Neutral greys, amber tints, gold on a dark ground and print stylesheets pass.
+**Fix.** Derive the ground and accent from the brand and the use case. Keep the pair only when the brand really is paper and clay, and mark it with a reason.
+**Limit.** Token files that define the two colours in different files are not matched.
+
 ### default-chart-palette (P2)
 **What.** Two or more colours from the default palettes of common chart libraries in one file, or a palette array of raw hex values outside a token file.
 **Why.** Charts that keep library defaults look the same in every product and carry no meaning.
@@ -308,6 +315,18 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** Marketing-style figures in UI text, such as "10x faster", "99.9% uptime", "trusted by 500 teams".
 **Why.** Invented numbers are dishonest and are a top generated tell.
 **Fix.** Show a number only when a real source backs it. Label sample data.
+
+### aphoristic-cadence (P2)
+**What.** Three or more short rebuttal pairs in one file of copy, such as "Not a X. A Y.", "No X. No Y.", "Less X. More Y." or "X. Just Y.".
+**Why.** One such line can be sharp. A page of them is a rhythm that generated copy falls into.
+**Detect.** Text nodes and string literals. Single uses, error text such as "Not found. Check the URL." and ordinary empty states pass.
+**Fix.** Say what the product does in a plain sentence, with a concrete fact.
+
+### placeholder-person-data (P2)
+**What.** Textbook placeholders in UI text, such as John Doe, Jane Smith, Acme Inc, Firstname Lastname or 123 Main Street.
+**Why.** They mark a screen whose sample data was never written. Varied, realistic values test a layout better.
+**Detect.** Text nodes and string literals. Files under `fixtures`, `mocks` and `seeds` directories, input `placeholder` attributes and comments are skipped. Tests and stories are already outside the default scan.
+**Fix.** Write realistic sample data, or label it as sample data.
 
 ### buzzword (P2)
 **What.** Words such as seamless, robust, leverage, empower, game-changing, cutting-edge, supercharge. "Unlock" and "harness" only count in stock phrases such as "unlock your potential".
