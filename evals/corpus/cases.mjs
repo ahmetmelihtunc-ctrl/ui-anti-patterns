@@ -303,3 +303,7 @@ N('iconcards-type-def', 'a.tsx', 'interface Item {\n  icon: typeof Server;\n  ti
 N('contrast-disabled-soft', 'a.tsx', 'const c = "bg-gray-100 text-gray-400 cursor-not-allowed";', 'low-contrast');
 N('dash-arithmetic', 'a.tsx', 'const w = a >= b ? a - b : null;\nconst h = {\n  width: g.maxX - g.minX + pad * 2,\n};', 'punct-dash-separator');
 N('colon-object-key', 'a.tsx', 'const o = {\n  HIGH: true,\n  Icon: IconCat,\n};', 'punct-colon-in-copy');
+N('glass-supports-fallback', 'a.css', '@supports not (backdrop-filter: blur(1px)) {\n  .a { background: #fff; }\n}', 'frosted-glass');
+N('glass-scrim-inline', 'a.tsx', 'const a = <div style={{ position: "fixed", inset: 0, background: "rgba(8,10,12,0.82)", backdropFilter: "blur(4px)" }} />;', 'frosted-glass');
+P('glass-header-sticky', 'a.tsx', 'const a = <header className="sticky top-0 bg-white/80 backdrop-blur-md">x</header>;', 'frosted-glass:1');
+P('glass-fixed-header', 'a.tsx', 'const a = <header className="fixed inset-x-0 top-0 bg-white/90 backdrop-blur-md">x</header>;', 'frosted-glass:1');

@@ -324,7 +324,12 @@ export const RULES = [
   {
     id: 'frosted-glass', severity: 'P1', title: 'Frosted glass (backdrop blur)',
     hint: 'Use a solid background. Keep blur only for real overlays that need it.',
-    scan: (ctx) => eachLine(ctx, (l) => (/(?:-webkit-)?backdrop-filter\s*:(?!\s*none)|\bbackdrop-blur(?:-[\w[\]]+)?\b|backdropFilter\s*:/.test(l) && !(/\binset-0\b|inset\s*:\s*0/.test(l) && /bg-black|rgba\(0,\s*0,\s*0/.test(l)) ? 'backdrop blur on a surface' : null)),
+    scan: (ctx) => eachLine(ctx, (l, i) => {
+      if (!/(?:-webkit-)?backdrop-filter\s*:(?!\s*none)|\bbackdrop-blur(?:-[\w[\]]+)?\b|backdropFilter\s*:/.test(l) || /@supports/.test(l)) return null;
+      const near = ctx.lines.slice(Math.max(0, i - 3), i + 1).join('\n');
+      const scrim = /\binset-0\b|inset\s*:\s*0/.test(near) && /bg-black|rgba\(\s*\d{1,2},\s*\d{1,2},\s*\d{1,2},\s*0?\.\d+\)|\bbg-\w+\/\d+/.test(near);
+      return scrim ? null : 'backdrop blur on a surface';
+    }),
   },
   {
     id: 'left-border-accent', severity: 'P1', title: 'Coloured left border accent',
