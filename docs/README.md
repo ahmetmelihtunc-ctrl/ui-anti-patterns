@@ -5,7 +5,7 @@ A Claude Code skill and a linter that find the habits that make an interface loo
 The tool has three parts.
 
 - A **skill** (`skills/ui-anti-patterns`) that tells Claude when and how to check, fix and guard UI work.
-- A **linter** (`scripts/ui-slop-lint.mjs`) with 44 rules. It needs Node 18 or newer and has no dependencies.
+- A **linter** (`scripts/ui-slop-lint.mjs`) with 44 rules. It needs Node 20 or newer and has no dependencies.
 - **Guards** in `hooks/`. A Claude Code hook, a git pre-commit script, a GitHub Action and a test snippet.
 
 ## Install as a Claude Code skill

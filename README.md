@@ -10,7 +10,7 @@
 # 🚀 UI Anti-Patterns Skill ✨
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-green)](package.json)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-green)](package.json)
 [![Tests](https://img.shields.io/badge/tests-passing%20on%20my%20machine-brightgreen)](test)
 [![Slop level](https://img.shields.io/badge/slop%20level-maximum%20(on%20purpose)-ff69b4)](#)
 
@@ -43,7 +43,7 @@ It is *also* — and this is the honest part — a dependency-free Node linter w
 ## 📦 Quick start — in just 3 easy steps! 📦
 
 1. 📥 Copy `skills/ui-anti-patterns` to `~/.claude/skills/`
-2. 🏃 Run `node scripts/ui-slop-lint.mjs src`
+2. 🏃 Run `node skills/ui-anti-patterns/scripts/ui-slop-lint.mjs src`
 3. 🎉 Enjoy your newly de-slopified front end!
 
 ## 🤝 Contributing 🤝

@@ -4,7 +4,7 @@ Thanks for helping. The linter is one dependency-free file, and the aim is to ke
 
 ## Setup
 
-Node 18 or newer. There is nothing to install.
+Node 20 or newer. There is nothing to install.
 
 ```
 node --test

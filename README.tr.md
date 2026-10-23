@@ -7,7 +7,7 @@ Bu depo, arayüzlerin "yapay zekâ üretmiş gibi" görünmesine yol açan alı�
 ## İçerik
 
 - `skills/ui-anti-patterns`, üç moduyla skill. CHECK sorunları raporlar, FIX düzeltir, GUARD gerilemeleri önler.
-- `scripts/ui-slop-lint.mjs`, Node 18 ve üzeri için bağımlılıksız linter. 44 kural içerir (renk, tipografi, bileşenler, hareket, metin ve noktalama).
+- `scripts/ui-slop-lint.mjs`, Node 20 ve üzeri için bağımlılıksız linter. 44 kural içerir (renk, tipografi, bileşenler, hareket, metin ve noktalama).
 - `hooks/`, Claude Code PostToolUse kancası, git pre-commit betiği, GitHub Action örneği ve test koruması.
 - `evals/`, etiketli tespit külliyatı, tetikleme sorguları ve görev değerlendirmeleri.
 
