@@ -47,7 +47,7 @@ test('baseline: legacy findings pass, a new finding fails', () => {
   fs.appendFileSync(f, '.b { border-left: 4px solid #3b82f6; }\n');
   const r = run([d, '--root', d, '--baseline', b]);
   assert.equal(r.status, 1);
-  assert.match(r.stdout, /left-border-accent/);
+  assert.match(r.stdout, /side-border-accent/);
   assert.doesNotMatch(r.stdout, /frosted-glass/);
   assert.equal(run([d, '--root', d, '--baseline', path.join(d, 'missing.json')]).status, 2);
 });

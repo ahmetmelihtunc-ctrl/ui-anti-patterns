@@ -40,7 +40,7 @@ Give the label a real verb phrase and a visible focus state.
 
 Tailwind. Replace `bg-gradient-to-r from-purple-500 to-blue-500` with a token such as `bg-surface`. Replace `bg-clip-text text-transparent` with `text-strong`.
 
-## Cards (nested-cards, left-border-accent, heavy-shadow, frosted-glass)
+## Cards (nested-cards, side-border-accent, heavy-shadow, frosted-glass)
 
 ```tsx
 // before
@@ -50,6 +50,19 @@ Tailwind. Replace `bg-gradient-to-r from-purple-500 to-blue-500` with a token su
 ```
 
 Group with whitespace and a divider. If the card is needed, use a solid background, a 1 pixel border and a small radius. For severity use an icon with a text label next to the message, not a coloured edge.
+
+## Surfaces (hard-offset-shadow, ghost-card, radial-glow-background, grid-line-background, stripes-gradient)
+
+```css
+/* before */
+.card { border: 1px solid #222; box-shadow: 6px 6px 0 #000, 0 20px 40px rgba(0, 0, 0, 0.3); }
+.page { background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.35), transparent 60%); }
+/* after, elevation declared once and a flat page */
+.card { border: 1px solid var(--border); }
+.page { background: var(--surface); }
+```
+
+Declare elevation once. A resting card gets a border or a tonal step, and only things that float (menu, dialog, popover) get a shadow. Replace a glow, grid or stripe wash with a flat surface, and spend the saved attention on one clear accent. In Tailwind, drop `shadow-xl` from any element that also has `border`, and remove `bg-grid` and arbitrary `bg-[radial-gradient(...)]` classes from wrappers. Grid lines are fine on a canvas or a topology view. Stripes are fine on a determinate progress bar.
 
 ## KPI cards (kpi-card-row)
 

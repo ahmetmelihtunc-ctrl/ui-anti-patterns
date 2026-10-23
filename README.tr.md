@@ -23,7 +23,7 @@ node ~/.claude/skills/ui-anti-patterns/scripts/ui-slop-lint.mjs src
 
 - Önem düzeyi P0, P1 ve P2. Varsayılan olarak P0 ve P1 çalışmayı başarısız kılar.
 - Baseline dosyası mevcut bulguları kaydeder. Yalnızca yeni bulgular hata verir.
-- Meşru kullanımlar yerinde bir yorumla işaretlenir ve bir gerekçe zorunludur. Örnek: `ui-slop-ignore left-border-accent: uyarı önem düzeyini gösterir`.
+- Meşru kullanımlar yerinde bir yorumla işaretlenir ve bir gerekçe zorunludur. Örnek: `ui-slop-ignore side-border-accent: uyarı önem düzeyini gösterir`.
 - `--fix-safe` yalnızca metin düğümlerinde iki mekanik düzeltme yapar. Varsayılan olarak deneme çalıştırmasıdır, `--write` ile uygulanır.
 
 ## Sınırlar

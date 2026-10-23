@@ -87,3 +87,12 @@ test('safe fixes leave a clean file unchanged', () => {
   const src = 'const a = <p>Fast, simple</p>;\n';
   assert.equal(safeFix('a.tsx', src).text, src);
 });
+
+test('the old left-border-accent id still works in config and baselines', () => {
+  const src = 'const a = <div className="border-l-4 border-red-500" />;';
+  assert.equal(lintText('a.tsx', src, { rules: { 'left-border-accent': 'off' } }).findings.length, 0);
+  assert.equal(lintText('a.tsx', src, { rules: { 'left-border-accent': 'P2' } }).findings[0].severity, 'P2');
+  const found = lintText('a.tsx', src).findings;
+  const old = { findings: [{ key: found[0] && `left-border-accent|a.tsx|${found[0].snippet}`, count: 1 }] };
+  assert.equal(applyBaseline(found, old)[0].baselined, true);
+});

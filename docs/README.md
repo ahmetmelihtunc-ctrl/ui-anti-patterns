@@ -71,7 +71,7 @@ The linter scans `tsx`, `jsx`, `vue`, `svelte`, `html`, `htm`, `css` and `scss`.
 A legitimate use is marked in place and must carry a reason.
 
 ```
-/* ui-slop-ignore left-border-accent: encodes alert severity */
+/* ui-slop-ignore side-border-accent: encodes alert severity */
 {/* ui-slop-ignore frosted-glass: sticky overlay over a map */}
 <!-- ui-slop-ignore-file emoji-ui: country names with flags -->
 ```
@@ -145,7 +145,7 @@ Copy `hooks/github-action/ui-slop.yml` to `.github/workflows/ui-slop.yml` and ad
 |---|---|
 | Colour | default-indigo, two-stop-gradient, gradient-text, default-chart-palette, hex-excess, accent-overuse, low-contrast |
 | Type | tiny-font, default-font-only, serif-italic-emphasis, accent-word-heading, mono-heading, caps-tracked, weak-hierarchy |
-| Components | emoji-ui, frosted-glass, left-border-accent, heavy-shadow, neon-glow, nested-cards, uniform-radius, icon-card-row, kpi-card-row, eyebrow-pill, small-touch-target, off-scale-spacing |
+| Components | emoji-ui, frosted-glass, side-border-accent, heavy-shadow, neon-glow, nested-cards, uniform-radius, icon-card-row, kpi-card-row, eyebrow-pill, small-touch-target, off-scale-spacing |
 | Motion and finish | scroll-entrance, cursor-glow, hover-opacity, floating-animation, gradient-orb, grain-noise, decorative-blob, placeholder-image |
 | Copy | em-dash, label-dash, middle-dot, arrow-suffix, placeholder-copy, invented-metric, buzzword |
 | Punctuation | punct-semicolon-in-copy, punct-colon-in-copy, punct-dash-separator |

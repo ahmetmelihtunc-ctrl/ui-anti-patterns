@@ -333,16 +333,17 @@ export const RULES = [
     }),
   },
   {
-    id: 'left-border-accent', severity: 'P1', title: 'Coloured left border accent',
+    id: 'side-border-accent', aliases: ['left-border-accent'], severity: 'P1', title: 'Coloured side border accent',
     hint: 'Build hierarchy with spacing and type. If the border encodes severity, add an ignore comment with that reason.',
     scan: (ctx) => eachLine(ctx, (l) => {
       let m;
-      if (/(?:border-left|borderLeft|border-inline-start)[^;,}]*\btransparent\b/i.test(l)) return null;
-      if (/\bborder-[ls]-(?:2|3|4|5|6|8)\b/.test(l) || /\bborder-[ls]-\[(?:[2-9]|\d{2,})px\]/.test(l)) return 'thick left border utility';
-      if (/\bborder-l-(?:primary|accent|destructive|success|warning|info|brand|(?:red|orange|amber|yellow|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|pink|rose)-\d+)\b/.test(l)) return 'coloured left border utility';
-      if ((m = l.match(/border-(?:left|inline-start)\s*:\s*(\d*\.?\d+)px\s+solid/i)) && +m[1] >= 2) return `${m[1]}px solid left border`;
-      if ((m = l.match(/border-(?:left|inline-start)-width\s*:\s*(\d*\.?\d+)px/i)) && +m[1] >= 2) return `${m[1]}px left border width`;
-      if ((m = l.match(/borderLeft(?:Width)?\s*:\s*['"]?(\d+)/)) && +m[1] >= 2) return 'inline-style left border';
+      if (/(?:border-(?:left|right)|border(?:Left|Right)|border-inline-(?:start|end))[^;,}]*\btransparent\b/i.test(l)) return null;
+      if (/\bborder-transparent\b/.test(l) && !/\bborder-(?!transparent\b|[lrtbxyse]-)[a-z]+-\d/.test(l)) return null;
+      if (/\bborder-[lrse]-(?:2|3|4|5|6|8)\b/.test(l) || /\bborder-[lrse]-\[(?:[2-9]|\d{2,})px\]/.test(l)) return 'thick side border utility';
+      if (/\bborder-[lr]-(?:primary|accent|destructive|success|warning|info|brand|(?:red|orange|amber|yellow|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|pink|rose)-\d+)\b/.test(l)) return 'coloured side border utility';
+      if ((m = l.match(/border-(left|right|inline-start|inline-end)\s*:\s*(\d*\.?\d+)px\s+solid/i)) && +m[2] >= 2) return `${m[2]}px solid ${m[1]} border`;
+      if ((m = l.match(/border-(left|right|inline-start|inline-end)-width\s*:\s*(\d*\.?\d+)px/i)) && +m[2] >= 2) return `${m[2]}px ${m[1]} border width`;
+      if ((m = l.match(/border(?:Left|Right)(?:Width)?\s*:\s*['"]?(\d+)/)) && +m[1] >= 2) return 'inline-style side border';
       return null;
     }),
   },
@@ -822,6 +823,74 @@ export const RULES = [
       return false;
     }, 'spaced dash separates two parts of a text', 2),
   },
+  {
+    id: 'hard-offset-shadow', severity: 'P2', title: 'Hard offset block shadow',
+    hint: 'Use a border, or a soft shadow on overlays only. A zero-blur offset shadow is a one-style costume.',
+    scan(ctx) {
+      const out = [];
+      for (const s of shadowsIn(ctx)) if (!s.inset && s.blur === 0 && Math.abs(s.x) >= 4 && Math.abs(s.y) >= 4) out.push({ line: s.line, msg: `${s.x}px ${s.y}px shadow with no blur` });
+      return out;
+    },
+  },
+  {
+    id: 'ghost-card', severity: 'P2', title: 'Hairline border plus wide soft shadow',
+    hint: 'Declare elevation once. Use the border for resting cards and keep the shadow for overlays.',
+    scan(ctx) {
+      const out = [];
+      const overlay = (line) => OVERLAY.test(ctx.lines.slice(Math.max(0, line - 4), line + 1).join('\n'));
+      for (const b of declBlocks(ctx)) {
+        if (!/^\d*\.?\d+px\s+solid\b/.test(b.decls.border || '') || !b.decls['box-shadow'] || OVERLAY.test(b.selector)) continue;
+        const wide = shadowsIn({ text: `box-shadow:${b.decls['box-shadow']};`, lineOf: () => b.line }).some((s) => !s.inset && s.blur >= 16);
+        if (wide) out.push({ line: b.line, msg: `${b.selector} has a border and a wide soft shadow` });
+      }
+      ctx.lines.forEach((l, i) => {
+        if (/(?<![\w:-])border(?![\w-])/.test(l) && /(?<![\w:-])shadow-(?:lg|xl|2xl)\b/.test(l) && !overlay(i + 1) && !/\bborder-(?:0|none)\b/.test(l)) out.push({ line: i + 1, msg: 'border and a large shadow on the same element' });
+      });
+      return out;
+    },
+  },
+  {
+    id: 'radial-glow-background', severity: 'P2', title: 'Coloured radial glow behind content',
+    hint: 'Use a flat page surface. A saturated radial wash is decoration, not information.',
+    scan(ctx) {
+      if (/chart|graph|heat|map/i.test(ctx.file)) return [];
+      const out = [], text = ctx.text.replace(/\bbg-\[radial-gradient\(([^\]]*)\)\]/g, (m, b) => 'radial-gradient(' + b.replace(/_/g, ' ') + ')');
+      for (const m of text.matchAll(/radial-gradient\(/g)) {
+        const body = balanced(text, m.index + m[0].length - 1);
+        if (!body) continue;
+        const stops = [...body.matchAll(/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)|\btransparent\b/gi)].map((c) => c[0].toLowerCase());
+        const last = stops[stops.length - 1], lastRgb = parseColor(last);
+        if (stops.length < 2 || !(last === 'transparent' || (lastRgb && lastRgb[3] === 0))) continue;
+        const first = parseColor(stops[0]);
+        if (!first || first[3] === 0 || hueSat(first).s <= 0.35) continue;
+        out.push({ line: ctx.lineOf(m.index), msg: 'radial gradient fades a saturated colour into transparent' });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'grid-line-background', severity: 'P2', title: 'Blueprint grid lines as a background',
+    hint: 'Use a flat surface. Keep a grid only where it is the content, such as a canvas or a topology view.',
+    scan(ctx) {
+      if (/canvas|graph|topolog|blueprint|chart|editor|map/i.test(ctx.file)) return [];
+      const out = [];
+      for (const b of declBlocks(ctx)) {
+        const bg = `${b.decls['background-image'] || ''} ${b.decls.background || ''}`;
+        if ((bg.match(/linear-gradient\(/g) || []).length >= 2 && /\b1px\b/.test(bg) && /^\d*\.?\d+px(?:\s+\d*\.?\d+px)?$/.test((b.decls['background-size'] || '').trim())) out.push({ line: b.line, msg: `${b.selector} draws grid lines with two 1px gradients` });
+      }
+      ctx.lines.forEach((l, i) => { if (/(?<![\w-])bg-grid(?:-[\w/[\]]+)?(?![\w-])/.test(l) || (/bg-\[(?:linear-gradient|image)/.test(l) && (l.match(/linear-gradient\(/g) || []).length >= 2 && /1px/.test(l) && /bg-\[size:/.test(l))) out.push({ line: i + 1, msg: 'grid-line background utility' }); });
+      return out;
+    },
+  },
+  {
+    id: 'stripes-gradient', severity: 'P2', title: 'Repeating stripe gradient as a surface',
+    hint: 'Use a flat surface. Keep stripes for determinate progress bars and chart hatching.',
+    scan: (ctx) => eachLine(ctx, (l, i) => {
+      if (!/repeating-(?:linear|radial)-gradient|bg-\[repeating-/.test(l)) return null;
+      const near = ctx.lines.slice(Math.max(0, i - 3), i + 1).join('\n');
+      return /progress|hatch|legend|chart|meter|skeleton|loading/i.test(near) ? null : 'repeating gradient used as a surface';
+    }),
+  },
 ];
 
 export const RULE_IDS = RULES.map((r) => r.id);
@@ -830,6 +899,9 @@ export const RULE_IDS = RULES.map((r) => r.id);
 
 const IGNORE_RE = /ui-slop-ignore(-file)?\s+([\w*,-]+)\s*(?::\s*(.*?))?\s*(?:\*\/|-->|\}\s*\}?\s*)?$/;
 const normSnippet = (s) => s.trim().replace(/\s+/g, ' ').slice(0, 160);
+
+/** A config override for a rule, looked up by id and then by any older alias. */
+const override = (cfg, rule) => [rule.id, ...(rule.aliases || [])].map((k) => (cfg.rules || {})[k]).find((v) => v !== undefined);
 
 export function kindOf(ext) { return ext === 'css' || ext === 'scss' ? 'style' : ext === 'md' ? 'md' : 'markup'; }
 
@@ -856,14 +928,14 @@ export function lintText(file, text, cfg = {}, state = {}) {
     }
     ignores.push({ line: i + 1, file: !!m[1], rules: new Set(m[2].split(',')), reason });
   });
-  const ignored = (rule, line) => ignores.some((g) => (g.rules.has(rule) || g.rules.has('*')) && (g.file || g.line === line || g.line === line - 1));
+  const ignored = (rule, line) => ignores.some((g) => (g.rules.has(rule.id) || (rule.aliases || []).some((a) => g.rules.has(a)) || g.rules.has('*')) && (g.file || g.line === line || g.line === line - 1));
 
   let suppressed = 0;
   for (const rule of RULES) {
-    const ov = (cfg.rules || {})[rule.id];
+    const ov = override(cfg, rule);
     if (ov === 'off' || ov === false) continue;
     for (const r of rule.scan(ctx) || []) {
-      if (ignored(rule.id, r.line)) { suppressed++; continue; }
+      if (ignored(rule, r.line)) { suppressed++; continue; }
       const sev = SEV[ov] !== undefined ? ov : r.severity || rule.severity;
       findings.push({ rule: rule.id, severity: sev, file, line: r.line, snippet: normSnippet(orig[r.line - 1] ?? ''), message: r.msg || rule.title, hint: rule.hint });
     }
@@ -876,7 +948,7 @@ export function finalizeProject(state, cfg = {}) {
   const out = [];
   for (const rule of RULES) {
     if (!rule.finalize) continue;
-    const ov = (cfg.rules || {})[rule.id];
+    const ov = override(cfg, rule);
     if (ov === 'off' || ov === false) continue;
     for (const r of rule.finalize(state) || []) out.push({ rule: rule.id, severity: SEV[ov] !== undefined ? ov : rule.severity, file: r.file, line: r.line, snippet: normSnippet(r.snippet), message: r.msg, hint: rule.hint });
   }
@@ -928,6 +1000,9 @@ export function lintFiles(targets, root, cfg = {}) {
 
 /* ---------- baseline ---------- */
 
+const RENAMED = Object.fromEntries(RULES.flatMap((r) => (r.aliases || []).map((a) => [a, r.id])));
+const renamed = (key) => { const i = key.indexOf('|'); return RENAMED[key.slice(0, i)] ? RENAMED[key.slice(0, i)] + key.slice(i) : key; };
+
 export const findingKey = (f) => `${f.rule}|${f.file}|${normSnippet(f.snippet)}`;
 
 export function buildBaseline(findings) {
@@ -938,7 +1013,8 @@ export function buildBaseline(findings) {
 
 /** Marks each finding `baselined: true` when the baseline still has an unused slot for its key. */
 export function applyBaseline(findings, baseline) {
-  const left = new Map((baseline?.findings || []).map((b) => [b.key, b.count]));
+  const left = new Map();
+  for (const b of baseline?.findings || []) { const k = renamed(b.key); left.set(k, (left.get(k) || 0) + b.count); }
   for (const f of findings) {
     const k = findingKey(f), n = left.get(k) || 0;
     f.baselined = n > 0;

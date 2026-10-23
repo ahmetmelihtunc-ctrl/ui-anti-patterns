@@ -38,7 +38,7 @@ These numbers describe regressions and known edge cases only. The corpus was wri
 | invented-metric | P1 | 2 | 0 | 0 | 1.00 | 1.00 | 1.00 |
 | kpi-card-row | P2 | 2 | 0 | 0 | 1.00 | 1.00 | 1.00 |
 | label-dash | P1 | 1 | 0 | 0 | 1.00 | 1.00 | 1.00 |
-| left-border-accent | P1 | 2 | 0 | 0 | 1.00 | 1.00 | 1.00 |
+| side-border-accent | P1 | 2 | 0 | 0 | 1.00 | 1.00 | 1.00 |
 | low-contrast | P0 | 4 | 0 | 0 | 1.00 | 1.00 | 1.00 |
 | middle-dot | P2 | 1 | 0 | 0 | 1.00 | 1.00 | 1.00 |
 | mono-heading | P2 | 2 | 0 | 0 | 1.00 | 1.00 | 1.00 |
@@ -73,7 +73,7 @@ On the first pass, nine rules had clear false positives. They are listed here wi
 | em-dash | about half false | a lone dash used as an empty-value marker |
 | frosted-glass | 3 of 7 false | `backdrop-filter: none`, `@supports`, full-screen scrims |
 | heavy-shadow | 3 of 7 false | dropdowns, popovers and dialogs |
-| left-border-accent | 2 of 8 false | transparent borders |
+| side-border-accent | 2 of 8 false | transparent borders |
 | icon-card-row | 1 of 1 false | TypeScript interface fields |
 
 After the fixes, the re-read sample had no remaining false positives for these rules, and the other rules had none on first read. The sample is small and was not random, so treat this as a rough estimate. Heuristic rules (weak-hierarchy, hex-excess) have low confidence, and hex-excess reports theme files unless they are listed in `tokenFiles`.

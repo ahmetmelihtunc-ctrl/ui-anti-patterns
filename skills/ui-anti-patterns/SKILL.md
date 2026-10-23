@@ -62,7 +62,7 @@ If a second attempt at the same piece of work does not clearly improve it, stop.
 Some patterns carry information. A coloured border that encodes alert severity, a gradient in a chart that encodes a scale, an emoji that is user data, and uppercase for a real abbreviation are fine. Keep them, and mark the line with a reason.
 
 ```
-/* ui-slop-ignore left-border-accent: encodes alert severity */
+/* ui-slop-ignore side-border-accent: encodes alert severity */
 ```
 
 An ignore comment without a reason is itself a finding.

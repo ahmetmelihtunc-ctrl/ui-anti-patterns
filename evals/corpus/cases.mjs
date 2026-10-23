@@ -49,12 +49,12 @@ P('glass-tailwind', 'a.tsx', 'const a = <div className="bg-white/10 backdrop-blu
 N('glass-plain-blur', 'a.css', '.avatar-loading { filter: blur(2px); }', 'frosted-glass');
 N('glass-solid', 'a.tsx', 'const a = <div className="bg-white" />;', 'frosted-glass');
 
-/* left-border-accent */
-P('lborder-tailwind', 'a.tsx', 'const a = <div className="rounded-lg border-l-4 border-blue-500 p-4" />;', 'left-border-accent:1');
-P('lborder-css', 'a.css', '.tile { border-left: 4px solid #3b82f6; }', 'left-border-accent:1');
-N('lborder-hairline', 'a.css', '.nav { border-left: 1px solid #ddd; }', 'left-border-accent');
-N('lborder-plain-class', 'a.tsx', 'const a = <div className="border-l pl-4" />;', 'left-border-accent');
-N('lborder-severity-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore left-border-accent: encodes alert severity\n  <div className="border-l-4 border-red-500" />\n);', 'left-border-accent');
+/* side-border-accent */
+P('lborder-tailwind', 'a.tsx', 'const a = <div className="rounded-lg border-l-4 border-blue-500 p-4" />;', 'side-border-accent:1');
+P('lborder-css', 'a.css', '.tile { border-left: 4px solid #3b82f6; }', 'side-border-accent:1');
+N('lborder-hairline', 'a.css', '.nav { border-left: 1px solid #ddd; }', 'side-border-accent');
+N('lborder-plain-class', 'a.tsx', 'const a = <div className="border-l pl-4" />;', 'side-border-accent');
+N('lborder-severity-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore side-border-accent: encodes alert severity\n  <div className="border-l-4 border-red-500" />\n);', 'side-border-accent');
 
 /* scroll-entrance */
 P('entrance-framer', 'a.tsx', 'const a = <motion.section whileInView={{ opacity: 1 }} />;', 'scroll-entrance:1');
@@ -293,7 +293,7 @@ P('ignore-needs-reason', 'a.css', '.a { color: #6366f1; } /* ui-slop-ignore defa
 /* regressions found while reviewing real code */
 N('blob-object-url', 'a.tsx', 'const url = URL.createObjectURL(blob);', 'decorative-blob');
 N('emdash-empty-value', 'a.tsx', `const a = <td>{value ?? "${EM}"}</td>;`, 'em-dash');
-N('lborder-transparent', 'a.tsx', 'const s = { borderLeft: "2px solid transparent" };', 'left-border-accent');
+N('lborder-transparent', 'a.tsx', 'const s = { borderLeft: "2px solid transparent" };', 'side-border-accent');
 N('glass-none', 'a.css', '.card { backdrop-filter: none; }', 'frosted-glass');
 N('glass-modal-scrim', 'a.tsx', 'const a = <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />;', 'frosted-glass');
 N('shadow-dropdown', 'a.tsx', 'const a = <div className="absolute right-0 top-full shadow-2xl" />;', 'heavy-shadow');
@@ -307,3 +307,66 @@ N('glass-supports-fallback', 'a.css', '@supports not (backdrop-filter: blur(1px)
 N('glass-scrim-inline', 'a.tsx', 'const a = <div style={{ position: "fixed", inset: 0, background: "rgba(8,10,12,0.82)", backdropFilter: "blur(4px)" }} />;', 'frosted-glass');
 P('glass-header-sticky', 'a.tsx', 'const a = <header className="sticky top-0 bg-white/80 backdrop-blur-md">x</header>;', 'frosted-glass:1');
 P('glass-fixed-header', 'a.tsx', 'const a = <header className="fixed inset-x-0 top-0 bg-white/90 backdrop-blur-md">x</header>;', 'frosted-glass:1');
+
+/* side-border-accent, right side (the left side cases are above) */
+P('rborder-tailwind', 'a.tsx', 'const a = <div className="rounded-lg border-r-4 border-red-500 p-4" />;', 'side-border-accent:1');
+P('rborder-css', 'a.css', '.card { border-right: 3px solid #ef4444; }', 'side-border-accent:1');
+P('rborder-inline', 'a.tsx', 'const s = { borderRight: "4px solid #f59e0b" };', 'side-border-accent:1');
+P('rborder-logical-end', 'a.tsx', 'const a = <div className="border-e-4 border-blue-500 ps-3" />;', 'side-border-accent:1');
+N('rborder-divider-class', 'a.tsx', 'const a = <aside className="border-r border-zinc-200" />;', 'side-border-accent');
+N('rborder-divider-css', 'a.css', '.nav { border-right: 1px solid #ddd; }', 'side-border-accent');
+N('rborder-transparent-class', 'a.tsx', 'const a = <li className="border-r-4 border-transparent" />;', 'side-border-accent');
+N('rborder-severity-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore side-border-accent: encodes alert severity\n  <div className="border-r-4 border-red-500" />\n);', 'side-border-accent');
+N('rborder-old-alias-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore left-border-accent: encodes alert severity\n  <div className="border-l-4 border-red-500" />\n);', 'side-border-accent');
+
+/* hard-offset-shadow */
+P('offset-css', 'a.css', '.card { box-shadow: 6px 6px 0 #000; }', 'hard-offset-shadow:1');
+P('offset-tailwind', 'a.tsx', 'const a = <div className="shadow-[6px_6px_0_#000] border-2" />;', 'hard-offset-shadow:1');
+P('offset-inline', 'a.tsx', 'const s = { boxShadow: "4px 4px 0px #111" };', 'hard-offset-shadow:1');
+N('offset-focus-ring', 'a.css', 'button:focus-visible { box-shadow: 0 0 0 2px var(--focus); }', 'hard-offset-shadow');
+N('offset-soft', 'a.css', '.card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }', 'hard-offset-shadow');
+N('offset-hairline', 'a.css', '.row { box-shadow: 1px 1px 0 #ccc; }', 'hard-offset-shadow');
+N('offset-bottom-edge', 'a.css', '.btn { box-shadow: 0 4px 0 #1f2937; }', 'hard-offset-shadow');
+N('offset-inset', 'a.css', '.well { box-shadow: inset 4px 4px 0 #ddd; }', 'hard-offset-shadow');
+N('offset-ignored', 'a.css', '/* ui-slop-ignore hard-offset-shadow: the product brand is neobrutalist */\n.card { box-shadow: 6px 6px 0 #000; }', 'hard-offset-shadow');
+
+/* ghost-card */
+P('ghost-css', 'a.css', '.card {\n  border: 1px solid #222;\n  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);\n}', 'ghost-card:1');
+P('ghost-tailwind', 'a.tsx', 'const a = <div className="rounded-xl border border-zinc-800 shadow-xl p-4" />;', 'ghost-card:1');
+P('ghost-tailwind-2xl', 'a.tsx', 'const a = <section className="rounded-xl border bg-white shadow-2xl">x</section>;', 'ghost-card:1');
+N('ghost-dropdown', 'a.tsx', 'const a = <div className="absolute right-0 top-full rounded-md border bg-white shadow-xl" />;', 'ghost-card');
+N('ghost-dialog-css', 'a.css', '.dialog {\n  border: 1px solid #ddd;\n  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);\n}', 'ghost-card');
+N('ghost-small-shadow', 'a.tsx', 'const a = <div className="rounded-lg border shadow-sm" />;', 'ghost-card');
+N('ghost-small-shadow-css', 'a.css', '.card { border: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }', 'ghost-card');
+N('ghost-shadow-no-border', 'a.tsx', 'const a = <div className="rounded-xl bg-white shadow-xl" />;', 'ghost-card');
+N('ghost-border-color-only', 'a.tsx', 'const a = <div className="rounded-xl border-zinc-200 shadow-xl" />;', 'ghost-card');
+N('ghost-hover-only', 'a.tsx', 'const a = <div className="rounded-xl border hover:shadow-xl" />;', 'ghost-card');
+
+/* radial-glow-background */
+P('glow-css', 'a.css', '.hero { background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.35), transparent 60%); }', 'radial-glow-background:1');
+P('glow-tailwind', 'a.tsx', 'const a = <div className="bg-[radial-gradient(ellipse_at_top,#0ea5e9_0%,transparent_70%)]" />;', 'radial-glow-background:1');
+P('glow-hex-transparent-alpha', 'a.css', '.page { background-image: radial-gradient(60% 40% at 50% 0%, #22c55e, rgba(34, 197, 94, 0)); }', 'radial-glow-background:1');
+N('glow-grey-scrim', 'a.css', '.scrim { background: radial-gradient(circle, rgba(0, 0, 0, 0.4), transparent); }', 'radial-glow-background');
+N('glow-white-vignette', 'a.css', '.photo::after { background: radial-gradient(circle, #ffffff, transparent); }', 'radial-glow-background');
+N('glow-two-opaque-stops', 'a.css', '.knob { background: radial-gradient(circle at 30% 30%, #fff, #cbd5e1); }', 'radial-glow-background');
+N('glow-chart-file', 'chart.css', '.heat { background: radial-gradient(circle, #ef4444, transparent); }', 'radial-glow-background');
+N('glow-ignored', 'a.css', '/* ui-slop-ignore radial-glow-background: marketing hero approved by brand */\n.hero { background: radial-gradient(circle, #6366f1, transparent); }', 'radial-glow-background');
+
+/* grid-line-background */
+P('grid-css', 'a.css', '.page {\n  background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);\n  background-size: 24px 24px;\n}', 'grid-line-background:1');
+P('grid-tailwind-class', 'a.tsx', 'const a = <div className="bg-grid min-h-screen" />;', 'grid-line-background:1');
+P('grid-tailwind-arbitrary', 'a.tsx', 'const a = <div className="bg-[linear-gradient(#222_1px,transparent_1px),linear-gradient(90deg,#222_1px,transparent_1px)] bg-[size:24px_24px]" />;', 'grid-line-background:1');
+N('grid-topology-file', 'topology.css', '.view {\n  background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);\n  background-size: 24px 24px;\n}', 'grid-line-background');
+N('grid-one-rule-line', 'a.css', '.ruled { background-image: linear-gradient(#ddd 1px, transparent 1px); background-size: 100% 24px; }', 'grid-line-background');
+N('grid-two-gradients-no-lines', 'a.css', '.band { background-image: linear-gradient(#fff, #eee), linear-gradient(#eee, #ddd); background-size: 100% 50%; }', 'grid-line-background');
+N('grid-layout-class', 'a.tsx', 'const a = <div className="grid grid-cols-3 gap-4" />;', 'grid-line-background');
+N('grid-ignored', 'a.css', '/* ui-slop-ignore grid-line-background: the drawing area is a grid by design */\n.page {\n  background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);\n  background-size: 24px 24px;\n}', 'grid-line-background');
+
+/* stripes-gradient */
+P('stripes-css', 'a.css', '.hero { background: repeating-linear-gradient(45deg, #111 0 10px, #181818 10px 20px); }', 'stripes-gradient:1');
+P('stripes-tailwind', 'a.tsx', 'const a = <div className="bg-[repeating-linear-gradient(45deg,#111_0_10px,#181818_10px_20px)]" />;', 'stripes-gradient:1');
+P('stripes-radial', 'a.css', '.dots { background: repeating-radial-gradient(circle, #222 0 2px, transparent 2px 8px); }', 'stripes-gradient:1');
+N('stripes-progress', 'a.css', '.progress-bar {\n  background: repeating-linear-gradient(45deg, #3b82f6 0 8px, #60a5fa 8px 16px);\n}', 'stripes-gradient');
+N('stripes-chart-hatch', 'a.css', '/* chart legend */\n.hatch { background: repeating-linear-gradient(45deg, #888 0 2px, transparent 2px 6px); }', 'stripes-gradient');
+N('stripes-plain-linear', 'a.css', '.band { background: linear-gradient(#fff, #eee); }', 'stripes-gradient');
+N('stripes-ignored', 'a.css', '/* ui-slop-ignore stripes-gradient: shows a disabled region */\n.off { background: repeating-linear-gradient(45deg, #eee 0 4px, #ddd 4px 8px); }', 'stripes-gradient');

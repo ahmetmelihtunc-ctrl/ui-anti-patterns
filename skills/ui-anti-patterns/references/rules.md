@@ -101,18 +101,32 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **Fix.** Solid background.
 **Exceptions.** Full-screen modal scrims, and `backdrop-filter: none` resets.
 
-### left-border-accent (P1)
-**What.** A thick coloured left border on a card or alert.
-**Why.** It is the canonical generated dashboard tile.
-**Detect.** Left border of 2 pixels or more, in CSS, inline styles and Tailwind. Transparent borders and 1 pixel dividers pass.
+### side-border-accent (P1)
+**What.** A thick coloured border on one side of a card or alert, on the left or on the right.
+**Why.** It is the canonical generated dashboard tile. The right-hand version is the same habit mirrored.
+**Detect.** A side border of 2 pixels or more in CSS, inline styles and Tailwind (`border-l-4`, `border-r-4`, `border-e-4`, `border-right: 3px solid`). Transparent borders and 1 pixel dividers pass.
 **Fix.** Build hierarchy with spacing and type.
 **Exceptions.** A border that encodes alert severity. Mark it with a reason.
+**Alias.** Before version 0.2.0 this rule was called `left-border-accent`. The old id still works in ignore comments, in `rules` overrides and in existing baselines.
 
 ### heavy-shadow (P2, P1 above the limit)
 **What.** Large shadows (blur of 24 pixels or more, offset of 12 or more, Tailwind `shadow-xl` and `shadow-2xl`). Findings turn P1 when a file has more than `maxHeavyShadows` (default 4).
 **Why.** Soft heavy shadows on every card are a default of template kits.
 **Fix.** Border or tonal step. Keep shadows for overlays.
 **Exceptions.** Menus, popovers, dialogs and drawers.
+
+### hard-offset-shadow (P2)
+**What.** A shadow with no blur and an offset of 4 pixels or more on both axes, such as `6px 6px 0 #000`.
+**Why.** It is the block shadow of one specific style, applied by reflex to every card. It reads as a costume.
+**Detect.** Parses `box-shadow`, inline `boxShadow` and Tailwind `shadow-[...]`. Inset shadows, hairline offsets, one-axis bottom edges and focus rings pass.
+**Fix.** A border, or no elevation at all.
+**Exceptions.** A product whose brand is built on the style. Mark it with a reason.
+
+### ghost-card (P2)
+**What.** A resting card that has both a visible border and a wide soft shadow (blur of 16 pixels or more, or `shadow-lg`, `shadow-xl`, `shadow-2xl` next to a `border` class).
+**Why.** Two elevation cues on one surface add weight without adding meaning. Declare elevation once.
+**Detect.** A CSS rule with a solid border and a wide shadow, or a class string with both. Overlays (menus, dialogs, popovers, drawers) pass, as do small shadows and hover-only shadows.
+**Fix.** Keep the border and drop the shadow. Keep shadows for things that float.
 
 ### neon-glow (P2)
 **What.** A saturated coloured glow with no offset (box-shadow or Tailwind coloured shadow).
@@ -181,6 +195,24 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 ### gradient-orb (P1)
 **What.** Large blurred absolute elements used as glow backgrounds.
 **Fix.** Flat surface behind application content.
+
+### radial-glow-background (P2)
+**What.** A radial gradient that fades a saturated colour into transparent, used as a page, section or hero background (CSS or a Tailwind arbitrary value).
+**Why.** It is the spotlight wash behind a headline. It adds mood and no information. It sits next to `gradient-orb` (blurred elements) and `neon-glow` (shadows).
+**Detect.** First stop saturated and visible, last stop transparent. Grey scrims, vignettes, two opaque stops and any file named like a chart, graph, heat map or map pass.
+**Fix.** A flat page surface. Put the single accent on the one action that matters.
+
+### grid-line-background (P2)
+**What.** Blueprint grid lines as a background, made from two stacked 1 pixel linear gradients with a `background-size`, or a `bg-grid` utility.
+**Why.** It is a stock "technical" texture that says nothing about the product.
+**Detect.** Two or more `linear-gradient` layers with a 1 pixel stop and a pixel `background-size`. Files named like a canvas, graph, topology, blueprint, chart, editor or map pass, and so does a single ruled-line gradient.
+**Fix.** A flat surface. Keep a grid only where the grid is the content.
+
+### stripes-gradient (P2)
+**What.** `repeating-linear-gradient` or `repeating-radial-gradient` used as a surface.
+**Why.** Diagonal stripes and dot fields are decoration in the same family as grain and grid backgrounds.
+**Detect.** Skipped when the nearby lines mention a progress bar, chart, legend, hatch, meter, skeleton or loading state.
+**Fix.** A flat surface or a tonal step.
 
 ### grain-noise (P2)
 **What.** Noise or grain textures (`feTurbulence`, noise images).
