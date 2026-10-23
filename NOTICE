@@ -20,6 +20,7 @@ Files that contain adapted material
   skills/ui-anti-patterns/references/rules.md
   skills/ui-anti-patterns/SKILL.md
   skills/ui-anti-patterns/scripts/ui-slop-lint.mjs (rule selection)
+  Further files are listed under the two works below.
 
 Changes made to the adapted material
   Rewritten in new wording, merged with further rules, and turned into
@@ -28,3 +29,16 @@ Changes made to the adapted material
 References (read for ideas, no text reproduced)
   "20 signs a website was made by AI", scalr.sg blog
   "How to de-slopify your designs", UX Collective
+
+Further third-party works (version 0.2.0)
+
+This product includes ideas, names and short reworded passages from the two works below. They were read, condensed and mapped onto this skill's own rule ids. No source code from either work is included. The detection logic, fixtures and thresholds of the added rules were written for this project.
+
+1. Impeccable, https://github.com/pbakaus/impeccable, version 4.7.0, commit a054369.
+   Copyright 2025 Paul Bakaus. Licensed under the Apache License, Version 2.0.
+   Used in skills/ui-anti-patterns/references/vocabulary.md, skills/ui-anti-patterns/references/rules.md and skills/ui-anti-patterns/scripts/ui-slop-lint.mjs. What was taken is the names and one-line meanings of detector rules (for example side-tab, pulsing-dot, marquee, hard-offset-shadow, radial-halo, grid background, repeating-stripes-gradient, extreme-negative-tracking), and the idea of separating rules for working screens from rules for landing pages, which this skill implements as the operate and persuade profiles. Changes made, reworded, shortened, regrouped and cross-referenced to this skill's rules. Impeccable did not review or endorse this work. The name Impeccable belongs to its author.
+
+2. tasteskill (design-taste-frontend), https://github.com/Leonxlnx/taste-skill, commit 6010f91.
+   Copyright (c) 2026 Leonxlnx. Licensed under the MIT License. The full licence text is in LICENSES/taste-skill-MIT.txt.
+   Used in skills/ui-anti-patterns/references/vocabulary.md, skills/ui-anti-patterns/references/rendered-pass.md, skills/ui-anti-patterns/references/process.md, skills/ui-anti-patterns/references/checklist.md and skills/ui-anti-patterns/references/rules.md. What was taken is the names and thresholds of app-screen checks (for example numeric alignment, tabular figures, ragged rows, panel voids, unused canvas, chart hue count, colour share, heavy borders, icon chips), the KPI, table and state conventions of its app-screen guidance, and the idea of rules against transition-all, ease-in and scale-from-zero motion. Changes made, reworded, thresholds adjusted for dense working screens, converted to checklist items and to rules with this project's own detection logic.
+   Permission notice (MIT), reproduced because substantial ideas and thresholds are reused. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
