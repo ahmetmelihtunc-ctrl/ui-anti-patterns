@@ -61,10 +61,31 @@ The linter scans `tsx`, `jsx`, `vue`, `svelte`, `html`, `htm`, `css` and `scss`.
 }
 ```
 
+- `profile` is `persuade` (default, every rule) or `operate` (working screens, see below).
 - `tokenFiles` are the only places where raw hex colours are allowed.
 - Every `ignore` object needs a reason.
 - `rules` values can be `off`, `P0`, `P1` or `P2`.
 - The full option list is in `skills/ui-anti-patterns/references/rules.md`.
+
+### Profiles for working screens and landing pages
+
+A console and a landing page have different jobs, so they need different rules. `operate` is for screens people work in. `persuade` is for pages that argue for something.
+
+```json
+{
+  "profile": "operate",
+  "profileOverrides": [{ "paths": ["app/(marketing)/**", "site/**"], "profile": "persuade" }]
+}
+```
+
+- `persuade` is the default and runs every rule. Existing projects behave as in 0.1.0 unless they opt in.
+- `operate` switches off the rules that only make sense for landing pages (`eyebrow-pill`, `serif-italic-emphasis`, `accent-word-heading`, `icon-card-row`, `mono-heading`, `aphoristic-cadence`) and raises the tracked-caps limit from 3 to 8. An explicit `options.maxCapsLabels` always wins.
+- Every other rule stays on, including honesty, access, motion, colour and finish rules.
+- `profileOverrides` entries are matched in order by glob. The first match decides.
+- `--profile operate` on the command line overrides the config for one run. List the rules with `--list-rules`. Those that the `operate` profile switches off are marked.
+- The rule set has no checks for oversized page headings, numbered section labels or heading line length, so the profile has nothing to relax there.
+
+Pick `operate` for a product repo and `persuade` for a marketing site. The default stays strict on purpose, because a missing profile should never hide findings.
 
 ### Ignore comments
 

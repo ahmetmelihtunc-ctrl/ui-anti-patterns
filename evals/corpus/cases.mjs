@@ -524,3 +524,16 @@ N('person-input-placeholder', 'a.tsx', 'const a = <input placeholder="Jane Doe" 
 N('person-similar-words', 'a.tsx', 'const a = <p>Johnson Doe Acmeist Acme-free zone</p>;', 'placeholder-person-data');
 N('person-comment-only', 'a.tsx', '// example owner John Doe\nconst a = <p>Owner</p>;', 'placeholder-person-data');
 N('person-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore placeholder-person-data: demo tenant for the sales sandbox\n  <td>Acme Inc</td>\n);', 'placeholder-person-data');
+
+/* profiles: operate switches off landing-page rules and relaxes the caps limit */
+const EYEBROW_SRC = 'const a = (\n  <div>\n    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs">New release</span>\n    <h1>Scans</h1>\n  </div>\n);';
+N('operate-eyebrow-off', 'a.tsx', EYEBROW_SRC, 'eyebrow-pill');
+withConfig({ profile: 'operate' });
+N('operate-mono-heading-off', 'a.tsx', 'const a = <h2 className="font-mono">payments-api-7f9c</h2>;', 'mono-heading');
+withConfig({ profile: 'operate' });
+N('operate-icon-cards-off', 'a.tsx', 'const a = (\n  <div>\n    <div><Icon /><h3>One</h3><p>A</p></div>\n    <div><Icon /><h3>Two</h3><p>B</p></div>\n    <div><Icon /><h3>Three</h3><p>C</p></div>\n  </div>\n);', 'icon-card-row');
+withConfig({ profile: 'operate' });
+N('operate-override-by-path', 'app/console/page.tsx', EYEBROW_SRC, 'eyebrow-pill');
+withConfig({ profile: 'persuade', profileOverrides: [{ paths: ['app/console/**'], profile: 'operate' }] });
+P('persuade-override-by-path', 'app/home/page.tsx', EYEBROW_SRC, 'eyebrow-pill:3');
+withConfig({ profile: 'operate', profileOverrides: [{ paths: ['app/home/**'], profile: 'persuade' }] });

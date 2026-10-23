@@ -381,7 +381,7 @@ export const RULES = [
     },
   },
   {
-    id: 'icon-card-row', severity: 'P2', title: 'Three identical icon, title and blurb cards',
+    id: 'icon-card-row', landing: true, severity: 'P2', title: 'Three identical icon, title and blurb cards',
     hint: 'State the real number of points, make the most important one larger, and drop icons that carry no meaning.',
     scan(ctx) {
       const L = ctx.lines, heads = [];
@@ -405,7 +405,7 @@ export const RULES = [
     },
   },
   {
-    id: 'eyebrow-pill', severity: 'P2', title: 'Badge or eyebrow pill above a heading',
+    id: 'eyebrow-pill', landing: true, severity: 'P2', title: 'Badge or eyebrow pill above a heading',
     hint: 'Lead with the heading. If the label carries information, fold it into the heading or the page chrome.',
     scan: (ctx) => eachLine(ctx, (l, i) => {
       if (/<h[12]\b/.test(l)) return null;
@@ -639,7 +639,7 @@ export const RULES = [
     },
   },
   {
-    id: 'serif-italic-emphasis', severity: 'P2', title: 'One italic or serif word inside a heading',
+    id: 'serif-italic-emphasis', landing: true, severity: 'P2', title: 'One italic or serif word inside a heading',
     hint: 'Keep the heading in one style. Say the specific claim in plain words.',
     scan: lineRe(/<h[1-3]\b[^>]*>[^<]*<(?:em|i|span[^>]*\b(?:italic|font-serif)\b[^>]*)>\s*[\w'-]+\s*<\/(?:em|i|span)>/, 'single emphasised word in a heading'),
   },
@@ -761,7 +761,7 @@ export const RULES = [
     },
   },
   {
-    id: 'accent-word-heading', severity: 'P2', title: 'One word of a heading in a different colour',
+    id: 'accent-word-heading', landing: true, severity: 'P2', title: 'One word of a heading in a different colour',
     hint: 'Keep the heading in one colour. Say the claim in plain words.',
     scan(ctx) {
       const out = [];
@@ -773,7 +773,7 @@ export const RULES = [
     },
   },
   {
-    id: 'mono-heading', severity: 'P2', title: 'Monospace used for headings',
+    id: 'mono-heading', landing: true, severity: 'P2', title: 'Monospace used for headings',
     hint: 'Use monospace for identifiers, versions, hashes and code only.',
     scan(ctx) {
       const out = eachLine(ctx, (l) => (/<h[1-3]\b[^>]*\bfont-mono\b/.test(l) ? 'heading uses font-mono' : null));
@@ -1054,6 +1054,16 @@ export const RULES = [
   },
 ];
 
+/* ---------- profiles ---------- */
+// "persuade" runs every rule (the 0.1.0 behaviour). "operate" is for working screens such as consoles and
+// dashboards. It switches off rules marked `landing` and relaxes the tracked-caps limit.
+export const PROFILES = ['operate', 'persuade'];
+const OPERATE_OPTIONS = { maxCapsLabels: 8 };
+export function profileFor(file, cfg = {}) {
+  for (const o of cfg.profileOverrides || []) if (matchAny(o.paths, file)) return o.profile;
+  return cfg.profile || 'persuade';
+}
+
 export const RULE_IDS = RULES.map((r) => r.id);
 
 /* ---------- lint engine ---------- */
@@ -1069,7 +1079,8 @@ export function kindOf(ext) { return ext === 'css' || ext === 'scss' ? 'style' :
 export function lintText(file, text, cfg = {}, state = {}) {
   cfg = cfg || {};
   const ext = path.extname(file).slice(1).toLowerCase();
-  const opts = { ...DEFAULTS, ...(cfg.options || {}) };
+  const operate = profileFor(file, cfg) === 'operate';
+  const opts = { ...DEFAULTS, ...(operate ? OPERATE_OPTIONS : {}), ...(cfg.options || {}) };
   const stripped = stripComments(text, ext);
   const lines = stripped.split(/\r?\n/), orig = text.split(/\r?\n/);
   const offsets = []; let o = 0;
@@ -1094,7 +1105,7 @@ export function lintText(file, text, cfg = {}, state = {}) {
   let suppressed = 0;
   for (const rule of RULES) {
     const ov = override(cfg, rule);
-    if (ov === 'off' || ov === false) continue;
+    if (ov === 'off' || ov === false || (operate && rule.landing)) continue;
     for (const r of rule.scan(ctx) || []) {
       if (ignored(rule, r.line)) { suppressed++; continue; }
       const sev = SEV[ov] !== undefined ? ov : r.severity || rule.severity;
@@ -1246,6 +1257,7 @@ Usage: ui-slop-lint [paths...] [options]
   --update-baseline      write all current findings to the baseline file and exit 0
   --show-baselined       also print findings covered by the baseline
   --fix-safe [--write]   apply mechanical text fixes (dry run unless --write)
+  --profile <operate|persuade>  rule profile (default persuade, or the config value)
   --list-rules           print the rule table
 Exit codes: 0 clean, 1 findings at or above --fail-on, 2 usage error.`;
 
@@ -1262,11 +1274,12 @@ function parseArgs(argv) {
     else if (x === '--show-baselined') a.showBaselined = true;
     else if (x === '--list-rules') a.list = true;
     else if (x === '--help' || x === '-h') a.help = true;
-    else if (['--config', '--root', '--baseline', '--fail-on'].includes(x)) { a[{ '--config': 'config', '--root': 'root', '--baseline': 'baseline', '--fail-on': 'failOn' }[x]] = need(i, x); if (x === '--fail-on') a.failOnSet = true; i++; }
+    else if (['--config', '--root', '--baseline', '--fail-on', '--profile'].includes(x)) { a[{ '--config': 'config', '--root': 'root', '--baseline': 'baseline', '--fail-on': 'failOn', '--profile': 'profile' }[x]] = need(i, x); if (x === '--fail-on') a.failOnSet = true; i++; }
     else if (x.startsWith('--')) throw new Error(`unknown option ${x}`);
     else a.paths.push(x);
   }
   if (!['P0', 'P1', 'P2', 'none'].includes(a.failOn)) throw new Error('--fail-on must be P0, P1, P2 or none');
+  if (a.profile !== undefined && !PROFILES.includes(a.profile)) throw new Error('--profile must be operate or persuade');
   if (a.write && !a.fix) throw new Error('--write only works with --fix-safe');
   return a;
 }
@@ -1277,17 +1290,22 @@ export function loadConfig(root, file) {
     if (file) throw new Error(`config file not found: ${file}`);
     return {};
   }
-  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { throw new Error(`invalid config ${p}: ${e.message}`); }
+  let cfg;
+  try { cfg = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { throw new Error(`invalid config ${p}: ${e.message}`); }
+  const bad = [cfg.profile, ...(cfg.profileOverrides || []).map((o) => o.profile)].find((v) => v !== undefined && !PROFILES.includes(v));
+  if (bad !== undefined) throw new Error(`invalid config ${p}: profile must be one of ${PROFILES.join(', ')}, got ${JSON.stringify(bad)}`);
+  return cfg;
 }
 
 export function main(argv) {
   let args;
   try { args = parseArgs(argv); } catch (e) { process.stderr.write(`${e.message}\n${USAGE}\n`); return 2; }
   if (args.help) { process.stdout.write(USAGE + '\n'); return 0; }
-  if (args.list) { for (const r of RULES) process.stdout.write(`${r.severity}  ${r.id.padEnd(22)} ${r.title}\n`); return 0; }
+  if (args.list) { for (const r of RULES) process.stdout.write(`${r.severity}  ${r.id.padEnd(26)} ${r.title}${r.landing ? ' (off in the operate profile)' : ''}\n`); return 0; }
   const root = path.resolve(args.root || process.cwd());
   let cfg;
   try { cfg = loadConfig(root, args.config); } catch (e) { process.stderr.write(e.message + '\n'); return 2; }
+  if (args.profile) cfg = { ...cfg, profile: args.profile };
   const effFail = args.failOnSet ? args.failOn : cfg.failOn || args.failOn;
   const targets = args.paths.length ? args.paths : [root];
 

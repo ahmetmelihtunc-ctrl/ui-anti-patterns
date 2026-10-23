@@ -2,6 +2,8 @@
 
 Each rule has an id, a default severity, and a short entry. Ids are the names used in reports, in `ui-slop.config.json` and in ignore comments. Run `node scripts/ui-slop-lint.mjs --list-rules` for the live table.
 
+Rules whose entry carries a **Profile** line are landing-page rules. They are switched off by the `operate` profile, which is meant for working screens such as consoles and dashboards. See the profile section of `SKILL.md`.
+
 Terms used throughout. A **finding** is one reported problem at one location. A **rule** is one detection. The **baseline** is a file that records existing findings so only new ones fail. **Severity** is P0, P1 or P2.
 
 ## Colour
@@ -72,16 +74,19 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** One word of a heading wrapped in `em`, `i` or an italic or serif span.
 **Why.** Single-word emphasis in a headline is a stock flourish.
 **Fix.** Keep the heading in one style and state the claim plainly.
+**Profile.** Off in the `operate` profile.
 
 ### accent-word-heading (P2)
 **What.** One or two words of a heading given their own colour, mono font or underline.
 **Why.** Same flourish as above with colour instead of italics.
 **Fix.** One colour per heading.
+**Profile.** Off in the `operate` profile.
 
 ### mono-heading (P2)
 **What.** Headings set in a monospace font.
 **Why.** Mono makes a page look technical without saying anything. It is for identifiers, versions, hashes and code.
 **Fix.** Use the sans or display role for headings.
+**Profile.** Off in the `operate` profile.
 
 ### caps-tracked (P2, P1 above the limit)
 **What.** Uppercase text with letter spacing, used as a label. Findings turn P1 when a file has more than `maxCapsLabels` (default 3).
@@ -170,6 +175,7 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** Three sibling cards that each hold an icon, a title and a paragraph, or three data items with `icon`, `title` and `description`.
 **Why.** The three-up feature row is the most common generated section.
 **Fix.** State the real number of points, make the main one larger, drop icons that carry no meaning.
+**Profile.** Off in the `operate` profile.
 
 ### missing-tabular-nums (P2, project level)
 **What.** The project renders table cells that look numeric (right-aligned cells, digit-only cells, or cells filled by values named count, total, size, latency and similar) and no file sets tabular figures anywhere.
@@ -187,6 +193,7 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** A pill or "eyebrow" label placed directly above an `h1` or `h2`.
 **Why.** A badge over the headline adds a second headline.
 **Fix.** Lead with the heading. Fold real information into the heading or page chrome.
+**Profile.** Off in the `operate` profile.
 
 ### small-touch-target (P2)
 **What.** A button whose width and height are both determinable and both below `minTouchPx` (default 44).
@@ -321,6 +328,7 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **Why.** One such line can be sharp. A page of them is a rhythm that generated copy falls into.
 **Detect.** Text nodes and string literals. Single uses, error text such as "Not found. Check the URL." and ordinary empty states pass.
 **Fix.** Say what the product does in a plain sentence, with a concrete fact.
+**Profile.** Off in the `operate` profile.
 
 ### placeholder-person-data (P2)
 **What.** Textbook placeholders in UI text, such as John Doe, Jane Smith, Acme Inc, Firstname Lastname or 123 Main Street.
@@ -373,4 +381,6 @@ People rarely use semicolons and colons in short everyday interface copy. Writer
 | emojiAllowFiles | none | emoji-ui |
 | buzzwords, buzzwordsExclude | built-in list | buzzword |
 | touchTargets | true | small-touch-target |
+| profile | persuade (`operate` for working screens) | rules marked with a Profile line, and the caps limit |
+| profileOverrides | none | per-path profile, see docs/README.md |
 | figureFace | none (set `mono` when figures use a monospace face by design) | missing-tabular-nums |

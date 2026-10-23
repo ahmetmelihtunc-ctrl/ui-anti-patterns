@@ -96,3 +96,18 @@ test('the old left-border-accent id still works in config and baselines', () => 
   const old = { findings: [{ key: found[0] && `left-border-accent|a.tsx|${found[0].snippet}`, count: 1 }] };
   assert.equal(applyBaseline(found, old)[0].baselined, true);
 });
+
+test('operate profile relaxes the tracked caps limit, persuade keeps the default', () => {
+  const src = Array.from({ length: 5 }, (_, i) => `const l${i} = <div className="text-xs uppercase tracking-wider">Label ${i}</div>;`).join('\n');
+  const sev = (cfg) => lintText('a.tsx', src, cfg).findings.filter((f) => f.rule === 'caps-tracked').map((f) => f.severity);
+  assert.ok(sev({}).includes('P1'));
+  assert.ok(sev({ profile: 'persuade' }).includes('P1'));
+  assert.ok(!sev({ profile: 'operate' }).includes('P1'));
+  assert.ok(sev({ profile: 'operate' }).length > 0, 'individual labels are still reported');
+  assert.ok(sev({ profile: 'operate', options: { maxCapsLabels: 2 } }).includes('P1'), 'an explicit option wins over the profile');
+});
+
+test('only rules marked landing are skipped by the operate profile', () => {
+  const landing = RULES.filter((r) => r.landing).map((r) => r.id).sort();
+  assert.deepEqual(landing, ['accent-word-heading', 'aphoristic-cadence', 'eyebrow-pill', 'icon-card-row', 'mono-heading', 'serif-italic-emphasis']);
+});

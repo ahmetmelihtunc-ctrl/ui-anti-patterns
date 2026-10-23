@@ -97,3 +97,19 @@ test('hook exits 2 with findings for a new violation and 0 for clean or legacy c
   assert.equal(hook(f).status, 0, 'findings already in HEAD are not new');
   assert.equal(hook(path.join(d, 'notes.txt')).status, 0, 'unsupported files are skipped');
 });
+
+test('profile: config key, --profile flag and bad values', () => {
+  const d = tmp();
+  fs.writeFileSync(path.join(d, 'a.tsx'), 'const a = (\n  <div>\n    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs">New release</span>\n    <h1>Scans</h1>\n  </div>\n);\n');
+  const count = (args) => JSON.parse(run([d, '--root', d, '--json', ...args]).stdout).counts['eyebrow-pill'] || 0;
+  assert.equal(count([]), 1);
+  assert.equal(count(['--profile', 'operate']), 0);
+  fs.writeFileSync(path.join(d, 'ui-slop.config.json'), '{ "profile": "operate" }');
+  assert.equal(count([]), 0);
+  assert.equal(count(['--profile', 'persuade']), 1);
+  assert.equal(run([d, '--root', d, '--profile', 'landing']).status, 2);
+  fs.writeFileSync(path.join(d, 'ui-slop.config.json'), '{ "profile": "dashboard" }');
+  const bad = run([d, '--root', d]);
+  assert.equal(bad.status, 2);
+  assert.match(bad.stderr, /profile must be one of operate, persuade/);
+});

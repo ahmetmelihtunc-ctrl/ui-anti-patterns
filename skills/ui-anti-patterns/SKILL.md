@@ -37,13 +37,24 @@ Do not use it for backend work, logos, illustration, brand strategy or accessibi
 
 Change the threshold with `--fail-on`. Override a single rule in `ui-slop.config.json`.
 
+## Profiles
+
+Set `"profile"` in `ui-slop.config.json`, or pass `--profile`.
+
+| Profile | Use for | Effect |
+|---|---|---|
+| `persuade` (default) | Landing, marketing and docs pages, and any repo where you want every rule | Runs all rules. This is the behaviour of version 0.1.0 |
+| `operate` | Consoles, dashboards, settings and other screens people work in | Switches off the landing-page rules (eyebrow-pill, serif-italic-emphasis, accent-word-heading, icon-card-row, mono-heading, aphoristic-cadence) and raises the tracked-caps limit from 3 to 8 |
+
+Mixed repositories use `profileOverrides` to give a path its own profile. The honesty, access, motion, colour and finish rules stay on in both profiles. Rules that do not exist yet for oversized headings, numbered section labels or heading line length are not part of this skill, so the profile has nothing to turn off there.
+
 ## Workflow
 
 1. **Plan tokens first.** Write down colours, type roles, a type scale, a spacing scale and radius steps. Name one reference screen the work should resemble. Do this before generating markup.
 2. **Run the linter.** `node scripts/ui-slop-lint.mjs <dir>` from the project root. Add a config file that marks token files as the only place raw hex colours may live.
 3. **Read the report.** Group findings by theme (colour, type, components, motion, finish, copy). Fix in this order. Spacing, then buttons, then colour, then everything else.
 4. **Fix by theme in small commits.** One theme per commit. Re-run the linter after each one.
-5. **Review a screenshot.** The linter cannot judge composition. Look at the rendered page at desktop and phone width and go through the checklist.
+5. **Review a screenshot.** The linter cannot judge composition. Look at the rendered page at 1440 and 390 pixels, in each theme, and do the rendered pass in `references/rendered-pass.md`, then go through the checklist.
 6. **Record the baseline** if legacy findings remain, so new work is held to the full standard: `--update-baseline`.
 7. **Install a guard.** Pick the hook, pre-commit script, CI job or guard test that fits the project.
 
