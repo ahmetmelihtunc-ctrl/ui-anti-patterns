@@ -10,9 +10,17 @@ cd "$ROOT" || exit 0
 BASE=""
 [ -f ui-slop.baseline.json ] && BASE="--baseline ui-slop.baseline.json"
 
-git diff --cached --name-only --diff-filter=ACM -z \
-  | grep -z -E '\.(tsx|jsx|vue|svelte|html|htm|css|scss)$' \
-  | xargs -0 node "$LINT" --fail-on P1 $BASE
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(tsx|jsx|vue|svelte|html|htm|css|scss)$')
+[ -z "$FILES" ] && exit 0
+
+set --
+while IFS= read -r f; do set -- "$@" "$f"; done <<LIST
+$FILES
+LIST
+
+# BASE is either empty or two words, so it stays unquoted on purpose.
+# shellcheck disable=SC2086
+node "$LINT" "$@" --fail-on P1 $BASE
 STATUS=$?
 [ "$STATUS" -eq 0 ] && exit 0
 echo "ui-slop: commit blocked. Fix the findings above or record them with --update-baseline." >&2

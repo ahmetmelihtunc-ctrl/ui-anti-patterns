@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 // Scores the linter against the labelled corpus. Prints precision, recall and F1 per rule.
 // Usage: node evals/run-detection.mjs [--json] [--min-precision-high 0.9] [--min-precision 0.8] [--min-recall 0.8] [-v]
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
 import { cases } from './corpus/cases.mjs';
 import { lintText, finalizeProject, RULES } from '../skills/ui-anti-patterns/scripts/ui-slop-lint.mjs';
 
@@ -60,4 +58,3 @@ if (argv.includes('--json')) {
   for (const m of failures) console.log('FAIL ' + m);
 }
 process.exitCode = failures.length ? 1 : 0;
-void fileURLToPath; void path;
