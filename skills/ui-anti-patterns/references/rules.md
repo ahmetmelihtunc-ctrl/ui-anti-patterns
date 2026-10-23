@@ -222,6 +222,41 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** References to, or files named like, blob or wave graphics.
 **Fix.** Remove, or replace with a graphic that explains the product.
 
+### pulsing-status-dot (P2)
+**What.** A small rounded dot (12 pixels or less) that pulses or pings forever, such as `animate-ping` or `animate-pulse` on a `h-2 w-2 rounded-full` span, or a dot with an infinite pulse keyframe.
+**Why.** A pulse that is not tied to a real signal is decoration that claims liveness. Constant motion also pulls the eye away from the data.
+**Detect.** Small dot plus a ping or pulse animation. Skeleton bars, avatars, spinners and larger blocks pass.
+**Fix.** A static dot with a text label such as "Connected", plus the time of the last update.
+**Exceptions.** A heartbeat from a real feed. Mark it with a reason that names the data source.
+
+### marquee (P2)
+**What.** An auto-scrolling strip, such as the `marquee` element, an `animate-marquee` class, or a track that slides sideways forever with a linear keyframe.
+**Why.** It hides most items most of the time, cannot be paused by default, and is the standard logo-strip filler.
+**Detect.** The element, a class or animation named marquee, or keyframes that translate by half or all of the track and run linear infinite.
+**Fix.** A static row or grid. If items must scroll, use a scrollable container that the user controls.
+
+### transition-all (P2)
+**What.** `transition: all`, `transition-property: all` or the Tailwind `transition-all` class.
+**Why.** It animates every property that changes, including layout, and hides which change was intended.
+**Fix.** Name the properties, for example `transition: opacity 150ms, transform 150ms`, or use `transition-colors` or `transition-opacity`.
+
+### ease-in-ui (P2)
+**What.** `ease-in` (not `ease-in-out`) on a transition, the matching Tailwind class, the curve `cubic-bezier(0.4, 0, 1, 1)`, or `ease: "easeIn"` in a motion library.
+**Why.** A slow start makes a control feel late. Things that appear should decelerate.
+**Detect.** Transitions only. An `animation` that exits with `ease-in` passes.
+**Fix.** `ease-out` for entrances and state changes, `ease-in-out` for moves.
+
+### scale-zero-entrance (P2)
+**What.** An element that starts at `scale(0)`, `scale-0` or `scale: 0`.
+**Why.** Growing from a point looks like a template popover. A small change in scale together with opacity feels natural.
+**Fix.** Start at 0.95 to 0.98 with opacity 0, and anchor the transform origin to the trigger.
+**Exceptions.** A progress bar that grows with `scale-x-0` is not flagged.
+
+### bounce-easing (P2)
+**What.** An overshoot curve, for example a cubic-bezier whose second or fourth value is outside 0 to 1, a back, elastic or bounce easing name, or a spring with a bounce of 0.4 or more. The `animate-bounce` utility is covered by `floating-animation`.
+**Why.** Overshoot reads as playful. In a work tool it adds delay before the control settles.
+**Fix.** An ease-out curve such as `cubic-bezier(0.16, 1, 0.3, 1)`, or a spring with zero bounce.
+
 ### placeholder-image (P1)
 **What.** Images from placeholder hosts such as Unsplash, placehold.co or picsum.photos.
 **Fix.** Ship real assets or draw an honest empty state.

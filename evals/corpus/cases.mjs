@@ -370,3 +370,78 @@ N('stripes-progress', 'a.css', '.progress-bar {\n  background: repeating-linear-
 N('stripes-chart-hatch', 'a.css', '/* chart legend */\n.hatch { background: repeating-linear-gradient(45deg, #888 0 2px, transparent 2px 6px); }', 'stripes-gradient');
 N('stripes-plain-linear', 'a.css', '.band { background: linear-gradient(#fff, #eee); }', 'stripes-gradient');
 N('stripes-ignored', 'a.css', '/* ui-slop-ignore stripes-gradient: shows a disabled region */\n.off { background: repeating-linear-gradient(45deg, #eee 0 4px, #ddd 4px 8px); }', 'stripes-gradient');
+
+/* pulsing-status-dot */
+P('dot-pulse-tailwind', 'a.tsx', 'const a = <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />;', 'pulsing-status-dot:1');
+P('dot-ping-tailwind', 'a.tsx', 'const a = <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />;', 'pulsing-status-dot:1');
+P('dot-pulse-css', 'a.css', '.dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  animation: pulse 2s infinite;\n}', 'pulsing-status-dot:1');
+P('dot-size-utility', 'a.tsx', 'const a = <span className="size-2 rounded-full bg-red-500 animate-pulse" />;', 'pulsing-status-dot:1');
+N('dot-skeleton-bar', 'a.tsx', 'const a = <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />;', 'pulsing-status-dot');
+N('dot-skeleton-avatar', 'a.tsx', 'const a = <div className="h-12 w-12 animate-pulse rounded-full bg-zinc-200" />;', 'pulsing-status-dot');
+N('dot-spinner', 'a.tsx', 'const a = <span className="h-4 w-4 animate-spin rounded-full border-2" />;', 'pulsing-status-dot');
+N('dot-static', 'a.tsx', 'const a = <span className="h-2 w-2 rounded-full bg-green-500" />;', 'pulsing-status-dot');
+N('dot-css-spinner', 'a.css', '.spinner { width: 12px; height: 12px; animation: spin 1s linear infinite; }', 'pulsing-status-dot');
+N('dot-pulse-large-block', 'a.css', '.panel { width: 320px; height: 200px; animation: pulse 2s infinite; }', 'pulsing-status-dot');
+N('dot-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore pulsing-status-dot: heartbeat from the agent feed\n  <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />\n);', 'pulsing-status-dot');
+
+/* marquee */
+P('marquee-element', 'a.html', '<marquee>Latest news</marquee>', 'marquee:1');
+P('marquee-class', 'a.tsx', 'const a = <div className="animate-marquee flex gap-8">x</div>;', 'marquee:1');
+P('marquee-keyframes', 'a.css', '@keyframes scroll {\n  to { transform: translateX(-50%); }\n}\n.track { animation: scroll 30s linear infinite; }', 'marquee:4');
+P('marquee-named-animation', 'a.css', '.logos { animation: marquee 20s linear infinite; }', 'marquee:1');
+N('marquee-progress', 'a.css', '.bar { transition: width 0.3s linear; }', 'marquee');
+N('marquee-scroll-table', 'a.tsx', 'const a = <div className="overflow-x-auto"><table /></div>;', 'marquee');
+N('marquee-spinner', 'a.css', '@keyframes spin { to { transform: rotate(360deg); } }\n.s { animation: spin 1s linear infinite; }', 'marquee');
+N('marquee-slide-out-once', 'a.css', '@keyframes out { to { transform: translateX(-100%); } }\n.drawer { animation: out 0.3s ease-in forwards; }', 'marquee');
+N('marquee-word-in-copy', 'a.tsx', 'const a = <p>Marquee theatre listings</p>;', 'marquee');
+N('marquee-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore marquee: user-requested ticker for a trading floor\n  <div className="animate-marquee" />\n);', 'marquee');
+
+/* transition-all */
+P('tall-css', 'a.css', '.btn { transition: all 0.3s ease; }', 'transition-all:1');
+P('tall-tailwind', 'a.tsx', 'const a = <button className="transition-all duration-300">x</button>;', 'transition-all:1');
+P('tall-variant', 'a.tsx', 'const a = <button className="hover:transition-all">x</button>;', 'transition-all:1');
+P('tall-inline', 'a.tsx', 'const s = { transition: "all 0.2s" };', 'transition-all:1');
+P('tall-property', 'a.css', '.btn { transition-property: all; }', 'transition-all:1');
+N('tall-named', 'a.css', '.btn { transition: opacity 0.15s, transform 0.15s; }', 'transition-all');
+N('tall-colors', 'a.tsx', 'const a = <button className="transition-colors">x</button>;', 'transition-all');
+N('tall-opacity', 'a.tsx', 'const a = <button className="transition-opacity">x</button>;', 'transition-all');
+N('tall-none', 'a.tsx', 'const a = <button className="transition-none">x</button>;', 'transition-all');
+N('tall-allow-discrete', 'a.css', '.d { transition: display 0.2s allow-discrete; }', 'transition-all');
+N('tall-ignored', 'a.css', '/* ui-slop-ignore transition-all: a one-off demo block */\n.btn { transition: all 0.3s ease; }', 'transition-all');
+
+/* ease-in-ui */
+P('easein-css', 'a.css', '.panel { transition: transform 0.2s ease-in; }', 'ease-in-ui:1');
+P('easein-tailwind', 'a.tsx', 'const a = <div className="transition ease-in">x</div>;', 'ease-in-ui:1');
+P('easein-bezier', 'a.css', '.panel { transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1); }', 'ease-in-ui:1');
+P('easein-motion-lib', 'a.tsx', 'const t = { duration: 0.2, ease: "easeIn" };', 'ease-in-ui:1');
+N('easein-in-out', 'a.css', '.panel { transition: transform 0.2s ease-in-out; }', 'ease-in-ui');
+N('easein-out', 'a.css', '.panel { transition: transform 0.2s ease-out; }', 'ease-in-ui');
+N('easein-in-out-tailwind', 'a.tsx', 'const a = <div className="ease-in-out">x</div>;', 'ease-in-ui');
+N('easein-enter-animation', 'a.css', '.a { animation: fadeIn 0.2s ease-out; }', 'ease-in-ui');
+N('easein-exit-animation', 'a.css', '.a { animation: out 0.2s ease-in forwards; }', 'ease-in-ui');
+N('easein-expo-out', 'a.css', '.a { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }', 'ease-in-ui');
+
+/* scale-zero-entrance */
+P('scale0-css', 'a.css', '.pop { transform: scale(0); }', 'scale-zero-entrance:1');
+P('scale0-tailwind', 'a.tsx', 'const a = <div className="scale-0 group-hover:scale-100">x</div>;', 'scale-zero-entrance:1');
+P('scale0-motion-lib', 'a.tsx', 'const a = <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} />;', 'scale-zero-entrance:1');
+P('scale0-two-args', 'a.css', '.pop { transform: scale(0, 0); }', 'scale-zero-entrance:1');
+N('scale0-95', 'a.tsx', 'const a = <div className="scale-95 opacity-0">x</div>;', 'scale-zero-entrance');
+N('scale0-96-css', 'a.css', '.pop { transform: scale(0.96); }', 'scale-zero-entrance');
+N('scale0-x-bar', 'a.tsx', 'const a = <div className="origin-left scale-x-0" />;', 'scale-zero-entrance');
+N('scale0-scalex-css', 'a.css', '.bar { transform: scaleX(0); }', 'scale-zero-entrance');
+N('scale0-small-fraction', 'a.css', '.x { transform: scale(0.05); }', 'scale-zero-entrance');
+N('scale0-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore scale-zero-entrance: point of origin is the clicked marker\n  <div className="scale-0" />\n);', 'scale-zero-entrance');
+
+/* bounce-easing */
+P('bounce-bezier-css', 'a.css', '.a { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }', 'bounce-easing:1');
+P('bounce-bezier-tailwind', 'a.tsx', 'const a = <div className="ease-[cubic-bezier(0.34,1.56,0.64,1)]">x</div>;', 'bounce-easing:1');
+P('bounce-spring', 'a.tsx', 'const a = <motion.div transition={{ type: "spring", bounce: 0.6 }} />;', 'bounce-easing:1');
+P('bounce-back-name', 'a.tsx', 'const t = { duration: 0.4, ease: "easeOutBack" };', 'bounce-easing:1');
+N('bounce-expo', 'a.css', '.a { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }', 'bounce-easing');
+N('bounce-material', 'a.css', '.a { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }', 'bounce-easing');
+N('bounce-spring-none', 'a.tsx', 'const a = <motion.div transition={{ type: "spring", bounce: 0 }} />;', 'bounce-easing');
+N('bounce-spring-light', 'a.tsx', 'const a = <motion.div transition={{ type: "spring", bounce: 0.2 }} />;', 'bounce-easing');
+N('bounce-ease-out', 'a.css', '.a { transition: transform 0.3s ease-out; }', 'bounce-easing');
+N('bounce-utility-covered-elsewhere', 'a.tsx', 'const a = <span className="animate-bounce">x</span>;', 'bounce-easing');
+N('bounce-word-in-copy', 'a.tsx', 'const a = <p>Bounce rate by channel</p>;', 'bounce-easing');

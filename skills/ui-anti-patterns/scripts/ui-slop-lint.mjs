@@ -891,6 +891,61 @@ export const RULES = [
       return /progress|hatch|legend|chart|meter|skeleton|loading/i.test(near) ? null : 'repeating gradient used as a surface';
     }),
   },
+  {
+    id: 'pulsing-status-dot', severity: 'P2', title: 'Pulsing status dot',
+    hint: 'Show state with a static dot and a text label. Pulse only when it reflects a real live signal, and say so in an ignore reason.',
+    scan(ctx) {
+      const out = eachLine(ctx, (l) => {
+        if (!/\brounded-full\b/.test(l) || /\b(?:h|w|size)-(?:[4-9]|\d{2,})\b|\b(?:h|w|size)-\[(?:1[3-9]|[2-9]\d|\d{3,})px\]/.test(l)) return null;
+        if (/\banimate-ping\b/.test(l)) return 'ping animation on a dot';
+        return /\banimate-pulse\b/.test(l) && /\b(?:h|w|size)-(?:0\.5|1|1\.5|2|2\.5|3)\b/.test(l) ? 'pulse animation on a small dot' : null;
+      });
+      for (const b of declBlocks(ctx)) {
+        const px = (k) => { const m = (b.decls[k] || '').match(/^(\d*\.?\d+)px$/); return m ? +m[1] : null; };
+        const w = px('width'), h = px('height'), a = b.decls.animation || b.decls['animation-name'] || '';
+        if (w !== null && h !== null && w <= 12 && h <= 12 && /\b(?:pulse|ping|blink|beat|breathe|glow)\w*\b/i.test(a) && /infinite/.test(b.decls.animation || '')) out.push({ line: b.line, msg: `${b.selector} is a ${w}px dot with an infinite pulse` });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'marquee', severity: 'P2', title: 'Auto-scrolling marquee strip',
+    hint: 'Show the items in a static row or grid. Auto-scrolling content is hard to read and cannot be paused by default.',
+    scan(ctx) {
+      const out = eachLine(ctx, (l) => (/<marquee\b/i.test(l) ? 'marquee element' : /(?:class|className)\s*=\s*["'{`][^"'`]*(?<![\w-])(?:animate-)?marquee(?![\w-])/.test(l) || /animation(?:-name)?\s*:[^;]*marquee/i.test(l) ? 'marquee animation class' : null));
+      for (const k of ctx.text.matchAll(/@keyframes\s+([\w-]+)\s*\{([\s\S]*?\})\s*\}/g)) {
+        if (!/translate(?:X|3d)?\(\s*-(?:50|100)%/i.test(k[2])) continue;
+        const use = ctx.text.match(new RegExp(`animation[^;]*\\b${k[1]}\\b[^;]*(?:linear[^;]*infinite|infinite[^;]*linear)|animation[^;]*(?:linear[^;]*infinite|infinite[^;]*linear)[^;]*\\b${k[1]}\\b`));
+        if (use) out.push({ line: ctx.lineOf(use.index), msg: `keyframes ${k[1]} slide a track sideways forever` });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'transition-all', severity: 'P2', title: 'transition: all',
+    hint: 'Name the properties that change, for example opacity and transform. It avoids animating layout by accident.',
+    scan: (ctx) => eachLine(ctx, (l) => (/transition(?:-property)?\s*:\s*(?:['"`])?all\b/.test(l) || /(?<![\w-])(?:[\w-]+:)*transition-all(?![\w-])/.test(l) ? 'transition on all properties' : null)),
+  },
+  {
+    id: 'ease-in-ui', severity: 'P2', title: 'ease-in easing on a UI transition',
+    hint: 'Use ease-out for things that appear and ease-in-out for things that move. An ease-in start feels slow to respond.',
+    scan: (ctx) => eachLine(ctx, (l) => (/(?<![\w-])(?:[\w-]+:)*ease-in(?![\w-])/.test(l.replace(/animation[^;}]*/g, '')) || /transition(?:-timing-function)?\s*:[^;{}]*(?<![\w-])ease-in(?![\w-])/.test(l) || /cubic-bezier\(\s*0?\.4\s*,\s*0\s*,\s*1\s*,\s*1\s*\)/.test(l) || /\bease\s*:\s*['"]easeIn['"]/.test(l) ? 'ease-in on a transition' : null)),
+  },
+  {
+    id: 'scale-zero-entrance', severity: 'P2', title: 'Element scales up from zero',
+    hint: 'Start from 0.95 to 0.98 together with opacity. Nothing in the physical world grows from a point.',
+    scan: (ctx) => eachLine(ctx, (l) => (/scale\(\s*0(?:\.0+)?\s*(?:,\s*0(?:\.0+)?\s*)?\)/.test(l) || /(?<![\w-])(?:[\w-]+:)*scale-0(?![\w.-])/.test(l) || /\bscale\s*:\s*0\s*[,}]/.test(l) ? 'scale starts at zero' : null)),
+  },
+  {
+    id: 'bounce-easing', severity: 'P2', title: 'Overshoot, bounce or elastic easing',
+    hint: 'Use a plain ease-out curve. Overshoot on controls reads as playful and slow in a work tool.',
+    scan: (ctx) => eachLine(ctx, (l, i) => {
+      for (const m of l.matchAll(/cubic-bezier\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)/g)) if (+m[2] < 0 || +m[2] > 1 || +m[4] < 0 || +m[4] > 1) return 'cubic-bezier curve overshoots';
+      if (/['"`](?:ease)?(?:In|Out|InOut)?(?:Back|Elastic|Bounce)['"`]/.test(l)) return 'back, elastic or bounce easing name';
+      const b = l.match(/\bbounce\s*:\s*(0?\.[4-9]\d*|1(?:\.0+)?)\b/);
+      return b && /\bspring\b/.test(ctx.lines.slice(Math.max(0, i - 2), i + 1).join('\n')) ? `spring with bounce ${b[1]}` : null;
+    }),
+  },
 ];
 
 export const RULE_IDS = RULES.map((r) => r.id);

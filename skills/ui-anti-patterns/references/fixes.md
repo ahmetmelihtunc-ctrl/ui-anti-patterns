@@ -107,7 +107,7 @@ If the label is real information (a version), move it into the page header or ne
 
 Use the project icon set in `currentColor`, only when the icon matches its label.
 
-## Motion (scroll-entrance, cursor-glow, floating-animation)
+## Motion (scroll-entrance, cursor-glow, floating-animation, pulsing-status-dot, marquee, transition-all, ease-in-ui, scale-zero-entrance, bounce-easing)
 
 Delete the wrapper component and render the content directly. Keep motion that answers a click or a change of state, and wrap the rest in `@media (prefers-reduced-motion: no-preference)`.
 
@@ -116,6 +116,19 @@ Delete the wrapper component and render the content directly. Keep motion that a
   .drawer { transition: transform 160ms ease-out; }
 }
 ```
+
+Name the properties, pick a decelerating curve, and start from a small scale instead of zero.
+
+```css
+/* before */
+.menu { transform: scale(0); transition: all 0.3s ease-in; }
+.menu.open { transform: scale(1); }
+/* after */
+.menu { opacity: 0; transform: scale(0.96); transition: opacity 120ms ease-out, transform 120ms ease-out; }
+.menu.open { opacity: 1; transform: none; }
+```
+
+Replace a pulsing dot with a static dot and a word, for example a green dot and "Connected, updated 09:14". Replace a marquee with a static row. Replace an overshoot curve such as `cubic-bezier(0.34, 1.56, 0.64, 1)` with `cubic-bezier(0.16, 1, 0.3, 1)`.
 
 ## Contrast (low-contrast, tiny-font)
 
