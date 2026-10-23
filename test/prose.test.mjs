@@ -31,10 +31,12 @@ test('no em dashes or emoji in the repository (the parody README is exempt)', ()
 test('prose files pass the punctuation and copy rules of the linter itself', () => {
   const allow = new Set(['punct-semicolon-in-copy', 'punct-colon-in-copy', 'punct-dash-separator', 'middle-dot', 'arrow-suffix', 'em-dash']);
   const rules = Object.fromEntries(RULE_IDS.filter((r) => !allow.has(r)).map((r) => [r, 'off']));
+  const bad = [];
   for (const f of files.filter((f) => f.endsWith('.md'))) {
     const rel = path.relative(root, f);
-    if (JOKE.has(rel) || rel.startsWith('evals/tasks/') && false) continue;
+    if (JOKE.has(rel)) continue;
     const { findings } = lintText(rel, fs.readFileSync(f, 'utf8'), { rules });
-    assert.deepEqual(findings.map((x) => `${x.rule}:${x.line}`), [], rel);
+    for (const x of findings) bad.push(`${rel}:${x.line} ${x.rule}`);
   }
+  assert.deepEqual(bad, []);
 });

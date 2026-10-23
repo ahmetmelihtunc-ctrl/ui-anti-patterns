@@ -1,0 +1,30 @@
+ui-anti-patterns-skill
+Copyright 2026 the ui-anti-patterns-skill contributors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Attribution
+
+The core idea of a short list of "must-fix" generated-UI patterns (the "seven
+cardinal sins") and the soft and polish tells that follow it are adapted and
+condensed from the file docs/anti-ai-slop.md of the open-design project
+(https://github.com/nexu-io/open-design), which is licensed under the Apache
+License, Version 2.0. That file in turn credits the MIT-licensed refero_skill
+(https://github.com/referodesign/refero_skill). The rule list in this repository
+is a condensed and reworded adaptation. It was extended with detection logic,
+severity levels, configuration, baselines, hooks and evaluation tooling that are
+original to this project. The wording of the rules, documentation and linter
+messages is original.
+
+Files that contain adapted material
+  skills/ui-anti-patterns/references/rules.md
+  skills/ui-anti-patterns/SKILL.md
+  skills/ui-anti-patterns/scripts/ui-slop-lint.mjs (rule selection)
+
+Changes made to the adapted material
+  Rewritten in new wording, merged with further rules, and turned into
+  machine-checkable rules with tests.
+
+References (read for ideas, no text reproduced)
+  "20 signs a website was made by AI", scalr.sg blog
+  "How to de-slopify your designs", UX Collective

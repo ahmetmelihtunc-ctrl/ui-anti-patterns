@@ -1,0 +1,6 @@
+{
+  "name": "ui-anti-patterns",
+  "version": "0.1.0",
+  "description": "Checks, fixes and guards against generic generated-looking UI.",
+  "license": "Apache-2.0"
+}

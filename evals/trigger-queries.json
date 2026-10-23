@@ -1,0 +1,165 @@
+{
+  "description": "Prompts that should and should not invoke the ui-anti-patterns skill. Used to tune the description in SKILL.md.",
+  "queries": [
+    {
+      "prompt": "Review this dashboard page and tell me if it looks AI-generated",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Polish the UI of our settings page, it feels generic and templated",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Do a design review of this React component and list anything that reads as AI slop",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Remove the purple gradients and emoji icons from the landing page",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Add a new billing page to the app and keep it from looking vibecoded",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Our hero section has an eyebrow pill, a gradient headline and three icon cards, clean it up",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Set up a check so AI-slop patterns cannot sneak into our front end again",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Audit the CSS for glassmorphism, heavy shadows and neon glows",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Does this copy sound machine-written? Fix the em dashes and buzzwords in the UI strings",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Create a pre-commit hook that blocks generic AI-looking UI changes",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Check the tailwind classes in this page for default indigo accents and uneven spacing",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Make this admin console feel designed instead of generated",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Review the KPI cards on the overview screen, each one has a sparkline and a delta pill",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Find invented metrics like 10x faster or 99.9% uptime in our marketing components",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Run a UI anti-pattern check on the whole web folder and fix what you can safely",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Our charts use the default library colours, map them to design tokens",
+      "should_trigger": true
+    },
+    {
+      "prompt": "The dark mode text is hard to read, find low contrast pairs and sub-11px text in the stylesheet",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Write a baseline so legacy UI issues are tracked but new ones are blocked in CI",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Polish this pricing page, it looks like every other SaaS template",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Add the ui anti-patterns linter to our GitHub Actions with SARIF upload",
+      "should_trigger": true
+    },
+    {
+      "prompt": "Refactor the payment service to use a repository pattern",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Design a logo for my bakery",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Write a SQL migration that adds an index on orders.created_at",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Explain how React Server Components work",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Fix the failing Go unit test in the scheduler package",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Generate a color palette for my brand identity from a photo",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Write a blog post about our product launch",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Set up a Kubernetes deployment with a rolling update strategy",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Translate this UI string file from English to Turkish",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Optimise this Postgres query that takes 12 seconds",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Create an illustration of a mountain at sunset",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Review this pull request for security vulnerabilities in the auth middleware",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Add pagination to the REST API for listing users",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Convert this Python script to Rust",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Write unit tests for the date formatting helper",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Explain the difference between margin and padding in CSS",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Make the app faster, the bundle is 4 MB",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Build a CLI tool that renames files by date",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Draft a privacy policy for the mobile app",
+      "should_trigger": false
+    },
+    {
+      "prompt": "Run an accessibility audit with screen reader testing on our checkout flow",
+      "should_trigger": false
+    }
+  ]
+}
