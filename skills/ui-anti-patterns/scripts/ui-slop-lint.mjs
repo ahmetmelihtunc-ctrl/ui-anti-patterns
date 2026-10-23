@@ -946,6 +946,71 @@ export const RULES = [
       return b && /\bspring\b/.test(ctx.lines.slice(Math.max(0, i - 2), i + 1).join('\n')) ? `spring with bounce ${b[1]}` : null;
     }),
   },
+  {
+    id: 'extreme-negative-tracking', severity: 'P2', title: 'Letter spacing so tight that glyphs merge',
+    hint: 'Keep tracking between -0.05em and 0 for display type, and 0 for text. Tight tracking hurts reading speed.',
+    scan(ctx) {
+      const out = eachLine(ctx, (l) => {
+        for (const m of l.matchAll(/(?:letter-spacing\s*:|letterSpacing\s*:\s*['"`]?|\btracking-\[)\s*(-\d*\.?\d+)em/g)) if (+m[1] < -0.05) return `letter spacing ${m[1]}em`;
+        return null;
+      });
+      for (const b of declBlocks(ctx)) {
+        const ls = (b.decls['letter-spacing'] || '').match(/^(-\d*\.?\d+)px$/), fs = (b.decls['font-size'] || '').match(/^(\d*\.?\d+)px$/);
+        if (ls && fs && +ls[1] / +fs[1] < -0.05) out.push({ line: b.line, msg: `${b.selector} tracks ${ls[1]}px on ${fs[1]}px type` });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'focus-ring-removed', severity: 'P0', title: 'Focus outline removed with no replacement',
+    hint: 'Keep a visible keyboard focus style. Replace the outline with a ring, a border or an outline on :focus-visible, never with nothing.',
+    scan(ctx) {
+      if (ctx.kind === 'md') return [];
+      const none = /^(?:none|0|0 none)$/i;
+      const out = [];
+      const replaced = declBlocks(ctx).some((b) => /:focus/.test(b.selector.replace(/:not\([^)]*\)/g, '')) && ((b.decls.outline && !none.test(b.decls.outline.trim())) || (b.decls['box-shadow'] && !/^none$/i.test(b.decls['box-shadow'])) || b.decls['border-color'] || b.decls.border));
+      for (const b of declBlocks(ctx)) {
+        const o = b.decls.outline ?? b.decls['outline-style'];
+        if (o === undefined || !none.test(o.trim())) continue;
+        if (/:not\(:focus|\[tabindex=["']?-1|::?-moz-focus-inner|:active|:hover/.test(b.selector)) continue;
+        if (b.decls['box-shadow'] && !/^none$/i.test(b.decls['box-shadow'])) continue;
+        if (replaced) continue;
+        out.push({ line: b.line, msg: `${b.selector} removes the outline and nothing replaces it` });
+      }
+      const focusWithin = /focus-within:/.test(ctx.text);
+      ctx.lines.forEach((l, i) => {
+        const hit = [...l.matchAll(/(?<![\w-])((?:[\w-]+:)*)outline-(?:none|0)(?![\w-])/g)].find((m) => !/hover|active|disabled/.test(m[1]));
+        const inline = /\boutline\s*:\s*['"](?:none|0)['"]/.test(l);
+        if (!hit && !inline) return;
+        const near = ctx.lines.slice(Math.max(0, i - 4), i + 5).join('\n');
+        if (/tabIndex=\{-1\}|tabindex=["']-1/.test(near) || focusWithin) return;
+        if (/(?:focus|focus-visible|group-focus|peer-focus)(?:-visible)?:(?:ring|outline(?!-(?:none|0|hidden)(?![\w-]))|border|shadow|bg|underline|text|after|before)|data-\[(?:highlighted|focus)/.test(near)) return;
+        if (inline && /boxShadow|border/.test(near)) return;
+        out.push({ line: i + 1, msg: 'outline removed and no focus style nearby' });
+      });
+      return out;
+    },
+  },
+  {
+    id: 'missing-tabular-nums', severity: 'P2', title: 'Numeric table cells with no tabular figures',
+    hint: 'Set font-variant-numeric: tabular-nums (Tailwind tabular-nums) on figures, and right-align them, so digits line up.',
+    project: true,
+    scan(ctx) {
+      const t = (ctx.state.tnum ||= { table: null, covered: ctx.opts.figureFace === 'mono' });
+      if (ctx.kind === 'md') return [];
+      const NUM_CELL = /<(?:td|TableCell)\b[^>]*(?:text-right|align=["']right|textAlign\s*:\s*['"]right)|<(?:td|TableCell)\b[^>]*>\s*(?:\{[^}]*\b(?:count|total|amount|size|bytes|ms|latency|score|percent|pct|rate|duration|qty|price|cost|num\w*)\b[^}]*\}|[\d][\d,.]*\s*%?)\s*</i;
+      ctx.lines.forEach((l, i) => {
+        if (/tabular-nums|font-variant-numeric|\btnum\b|font-feature-settings/i.test(l)) t.covered = true;
+        if (NUM_CELL.test(l)) { if (/font-mono|monospace/.test(l)) t.covered = true; else if (!t.table) t.table = { file: ctx.file, line: i + 1, snippet: ctx.orig[i] }; }
+      });
+      if (ctx.kind === 'style') for (const b of declBlocks(ctx)) if (/(?:^|[\s,>])(?:td|th)\b|cell/i.test(b.selector) && /right/.test(b.decls['text-align'] || '') && !t.table) t.table = { file: ctx.file, line: b.line, snippet: b.selector };
+      return [];
+    },
+    finalize(state) {
+      const t = state.tnum;
+      return t && t.table && !t.covered ? [{ ...t.table, msg: 'right-aligned or numeric table cells, but no tabular figures anywhere in the project' }] : [];
+    },
+  },
 ];
 
 export const RULE_IDS = RULES.map((r) => r.id);

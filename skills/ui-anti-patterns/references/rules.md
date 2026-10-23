@@ -81,12 +81,25 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **Why.** Tracked caps labels above every block are decoration, not structure.
 **Fix.** Sentence case. Keep caps for real abbreviations.
 
+### extreme-negative-tracking (P2)
+**What.** Letter spacing below -0.05em, for example `letter-spacing: -0.08em`, `tracking-[-0.07em]` or `letterSpacing: "-0.1em"`. Pixel values count only when the same rule declares a pixel font size.
+**Why.** Glyphs touch and merge, which slows reading and looks like a style applied without checking the result.
+**Detect.** The standard `tracking-tight` (-0.025em) and `tracking-tighter` (-0.05em) pass, as does any value at or above -0.05em.
+**Fix.** Use -0.02em to -0.04em on large display type and 0 on everything else.
+
 ### weak-hierarchy (P2)
 **What.** A file with at least 12 text-size classes that uses two or fewer sizes and one weight.
 **Why.** Without contrast between levels the reader cannot find the main point.
 **Fix.** Give each level a distinct size and weight and enlarge the most important item.
 
 ## Components and layout
+
+### focus-ring-removed (P0)
+**What.** `outline: none`, `outline: 0`, `outline-none` or `focus:outline-none` with no replacement focus style.
+**Why.** Keyboard users lose track of where they are. This is an access failure, so it is P0.
+**Detect.** CSS rules and Tailwind class strings. A replacement is a box shadow, border or non-empty outline on a `:focus` or `:focus-visible` rule, or a `focus:ring`, `focus-visible:outline`, `focus:border` or `focus:bg` class within four lines, or any `focus-within:` class in the file. Elements with `tabIndex={-1}`, `:focus:not(:focus-visible)` rules and `outline-hidden` pass.
+**Fix.** Replace it, never remove it. `focus-visible:ring-2 focus-visible:ring-offset-2`, or `:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }`.
+**Limit.** A global focus style defined in another file is not seen. In that case add an ignore comment with that reason, or lower the rule in the config.
 
 ### emoji-ui (P1)
 **What.** Emoji inside headings, buttons, list items and labels, or label strings that start with an emoji.
@@ -150,6 +163,13 @@ Terms used throughout. A **finding** is one reported problem at one location. A 
 **What.** Three sibling cards that each hold an icon, a title and a paragraph, or three data items with `icon`, `title` and `description`.
 **Why.** The three-up feature row is the most common generated section.
 **Fix.** State the real number of points, make the main one larger, drop icons that carry no meaning.
+
+### missing-tabular-nums (P2, project level)
+**What.** The project renders table cells that look numeric (right-aligned cells, digit-only cells, or cells filled by values named count, total, size, latency and similar) and no file sets tabular figures anywhere.
+**Why.** Proportional digits make columns of numbers ragged, so the eye cannot compare them.
+**Detect.** Reported once per project, at the first numeric table cell. Any `tabular-nums`, `font-variant-numeric`, `tnum` or `font-feature-settings` in the project clears it, as does a monospace face on the numeric cell or the option `figureFace` set to `mono`.
+**Fix.** `font-variant-numeric: tabular-nums` on figures, plus right alignment and a fixed number of decimals.
+**Limit.** A heuristic. It cannot tell whether the cell really holds a number or whether the inherited font already has fixed-width digits.
 
 ### kpi-card-row (P2)
 **What.** Three or more sibling cards that each hold one large number and a small label, or KPI data items that carry value, label and delta.
@@ -334,3 +354,4 @@ People rarely use semicolons and colons in short everyday interface copy. Writer
 | emojiAllowFiles | none | emoji-ui |
 | buzzwords, buzzwordsExclude | built-in list | buzzword |
 | touchTargets | true | small-touch-target |
+| figureFace | none (set `mono` when figures use a monospace face by design) | missing-tabular-nums |

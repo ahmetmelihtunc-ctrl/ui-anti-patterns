@@ -163,7 +163,19 @@ Define roles once.
 h1, h2, h3 { font-family: var(--font-display); }
 ```
 
-Use one colour and one style per heading. Replace tracked caps labels with sentence case at a readable size.
+Use one colour and one style per heading. Replace tracked caps labels with sentence case at a readable size. For crushed tracking (extreme-negative-tracking) use -0.02em to -0.04em on large display type and 0 on text.
+
+## Focus and figures (focus-ring-removed, missing-tabular-nums)
+
+```css
+/* before */
+button:focus { outline: none; }
+/* after, visible for the keyboard and quiet for the mouse */
+button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; text-align: right; }
+```
+
+Tailwind. Pair `outline-none` only with `focus-visible:ring-2 focus-visible:ring-offset-2`, and give numeric cells `text-right tabular-nums`. Use a fixed number of decimals per column so the digits line up.
 
 ## Copy (em-dash, buzzword, invented-metric, placeholder-copy, punctuation rules)
 

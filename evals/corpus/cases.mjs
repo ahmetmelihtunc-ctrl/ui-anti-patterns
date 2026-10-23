@@ -445,3 +445,47 @@ N('bounce-spring-light', 'a.tsx', 'const a = <motion.div transition={{ type: "sp
 N('bounce-ease-out', 'a.css', '.a { transition: transform 0.3s ease-out; }', 'bounce-easing');
 N('bounce-utility-covered-elsewhere', 'a.tsx', 'const a = <span className="animate-bounce">x</span>;', 'bounce-easing');
 N('bounce-word-in-copy', 'a.tsx', 'const a = <p>Bounce rate by channel</p>;', 'bounce-easing');
+
+/* extreme-negative-tracking */
+P('track-em-css', 'a.css', '.h { letter-spacing: -0.08em; }', 'extreme-negative-tracking:1');
+P('track-em-tailwind', 'a.tsx', 'const a = <h1 className="text-5xl tracking-[-0.07em]">x</h1>;', 'extreme-negative-tracking:1');
+P('track-em-inline', 'a.tsx', 'const s = { letterSpacing: "-0.1em" };', 'extreme-negative-tracking:1');
+P('track-px-with-size', 'a.css', '.h {\n  font-size: 40px;\n  letter-spacing: -4px;\n}', 'extreme-negative-tracking:1');
+N('track-mild', 'a.css', '.h { letter-spacing: -0.02em; }', 'extreme-negative-tracking');
+N('track-tight-utility', 'a.tsx', 'const a = <h1 className="tracking-tight">x</h1>;', 'extreme-negative-tracking');
+N('track-tighter-utility', 'a.tsx', 'const a = <h1 className="text-6xl tracking-tighter">x</h1>;', 'extreme-negative-tracking');
+N('track-boundary', 'a.tsx', 'const a = <h1 className="tracking-[-0.05em]">x</h1>;', 'extreme-negative-tracking');
+N('track-px-large-type', 'a.css', '.h {\n  font-size: 48px;\n  letter-spacing: -1px;\n}', 'extreme-negative-tracking');
+N('track-px-no-size', 'a.css', '.h { letter-spacing: -2px; }', 'extreme-negative-tracking');
+N('track-positive', 'a.css', '.cap { letter-spacing: 0.08em; }', 'extreme-negative-tracking');
+
+/* focus-ring-removed */
+P('focus-css-none', 'a.css', 'button:focus { outline: none; }', 'focus-ring-removed:1');
+P('focus-css-reset', 'a.css', '* { outline: 0; }', 'focus-ring-removed:1');
+P('focus-tailwind', 'a.tsx', 'const a = <input className="rounded-md border px-3 outline-none" />;', 'focus-ring-removed:1');
+P('focus-tailwind-variant', 'a.tsx', 'const a = <button className="px-4 focus:outline-none">Save</button>;', 'focus-ring-removed:1');
+P('focus-inline', 'a.tsx', 'const a = <input style={{ outline: "none" }} />;', 'focus-ring-removed:1');
+N('focus-tailwind-ring', 'a.tsx', 'const a = <button className="outline-none focus-visible:ring-2">Save</button>;', 'focus-ring-removed');
+N('focus-css-box-shadow', 'a.css', 'button:focus { outline: none; box-shadow: 0 0 0 2px #2563eb; }', 'focus-ring-removed');
+N('focus-css-replaced-elsewhere', 'a.css', '.btn { outline: none; }\n.btn:focus-visible { outline: 2px solid #2563eb; }', 'focus-ring-removed');
+N('focus-css-not-visible', 'a.css', 'button:focus:not(:focus-visible) { outline: none; }', 'focus-ring-removed');
+N('focus-tabindex-minus-one', 'a.tsx', 'const a = <main tabIndex={-1} className="outline-none">x</main>;', 'focus-ring-removed');
+N('focus-menu-item-highlight', 'a.tsx', 'const a = <div className="flex cursor-default outline-none focus:bg-accent focus:text-accent-foreground">x</div>;', 'focus-ring-removed');
+N('focus-wrapper-focus-within', 'a.tsx', 'const a = (\n  <label className="rounded-md border focus-within:ring-2">\n    <input className="w-full outline-none" />\n  </label>\n);', 'focus-ring-removed');
+N('focus-multiline-class', 'a.tsx', 'const a = cn(\n  "rounded-md",\n  "outline-none",\n  "focus-visible:ring-2"\n);', 'focus-ring-removed');
+N('focus-outline-hidden', 'a.tsx', 'const a = <button className="outline-hidden px-4">Save</button>;', 'focus-ring-removed');
+N('focus-ignored', 'a.tsx', 'const a = (\n  // ui-slop-ignore focus-ring-removed: the wrapper draws the focus frame\n  <input className="outline-none" />\n);', 'focus-ring-removed');
+
+/* missing-tabular-nums (project level) */
+const TNUM_TABLE = 'const t = <table><tbody><tr><td className="text-right">{row.count}</td></tr></tbody></table>;';
+project('tnum-missing-right-aligned', [{ name: 'a.tsx', code: TNUM_TABLE }, { name: 'a.css', code: 'body { font-family: Inter; }' }], ['missing-tabular-nums:1'], []);
+project('tnum-missing-literal-figures', [{ name: 'a.tsx', code: 'const t = <table><tr><td>1,204</td></tr></table>;' }], ['missing-tabular-nums:1'], []);
+project('tnum-missing-css-right-cells', [{ name: 'a.css', code: 'td.num {\n  text-align: right;\n}' }], ['missing-tabular-nums:1'], []);
+project('tnum-present-css', [{ name: 'a.tsx', code: TNUM_TABLE }, { name: 'a.css', code: '.num { font-variant-numeric: tabular-nums; }' }], [], ['missing-tabular-nums']);
+project('tnum-present-class-elsewhere', [{ name: 'a.tsx', code: TNUM_TABLE }, { name: 'b.tsx', code: 'const k = <b className="tabular-nums">{n}</b>;' }], [], ['missing-tabular-nums']);
+project('tnum-text-only-table', [{ name: 'a.tsx', code: 'const t = <table><tr><td>{row.name}</td><td>{row.owner}</td></tr></table>;' }], [], ['missing-tabular-nums']);
+project('tnum-mono-figures', [{ name: 'a.tsx', code: 'const t = <table><tr><td className="text-right font-mono">{row.count}</td></tr></table>;' }], [], ['missing-tabular-nums']);
+project('tnum-no-table', [{ name: 'a.tsx', code: 'const k = <div className="text-right">{count}</div>;' }], [], ['missing-tabular-nums']);
+project('tnum-font-feature-settings', [{ name: 'a.tsx', code: TNUM_TABLE }, { name: 'a.css', code: 'td { font-feature-settings: "tnum"; }' }], [], ['missing-tabular-nums']);
+project('tnum-figure-face-config', [{ name: 'a.tsx', code: TNUM_TABLE }], [], ['missing-tabular-nums']);
+cases[cases.length - 1].config = { options: { figureFace: 'mono' } };
