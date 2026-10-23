@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 const SEV = { P0: 0, P1: 1, P2: 2 };
 const EM = '\u2014';
 

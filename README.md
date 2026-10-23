@@ -20,7 +20,7 @@
 
 Are you ready to **supercharge your workflow** — and **elevate your front end** to **unprecedented heights**? 🚀 Look no further! **UI Anti-Patterns Skill** is a **seamless, robust, cutting-edge, next-gen, game-changing** solution that **leverages** the power of regular expressions to **revolutionize** how you ship interfaces! ✨
 
-It is *also* — and this is the honest part — a dependency-free Node linter with 44 rules, tests, and a Claude Code skill. The tool underneath is real. Only the front page is a costume. 🎭
+It is *also* — and this is the honest part — a dependency-free Node linter with 61 rules, tests, and a Claude Code skill. The tool underneath is real. Only the front page is a costume. 🎭
 
 ## ⚡ Why choose UI Anti-Patterns? ⚡
 
