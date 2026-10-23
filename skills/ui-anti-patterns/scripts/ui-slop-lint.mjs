@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 // ui-slop-lint: finds common "generated UI" patterns in a front-end codebase.
 // Dependency-free, Node >= 18. See ../references/rules.md for the rule catalogue.
-// Source note: write dashes as — escapes so this file passes its own prose checks.
+// Source note: write dashes as \u2014 escapes so this file passes its own prose checks.
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const VERSION = '0.1.0';
 const SEV = { P0: 0, P1: 1, P2: 2 };
-const EM = '—';
+const EM = '\u2014';
 
 /* ---------- colour helpers ---------- */
 
@@ -91,15 +91,17 @@ export function stripComments(text, ext) {
 }
 
 const PURE_TEXT = /^\s*[^<>{}=;`$\\/"']*[A-Za-z][^<>{}=;`$\\/"']*$/;
+const CODEISH = /\w\.[A-Za-z_$]|[[\]]|\?\?|&&|\|\||\s\?\s|=>|\+\+|;\s*$|^\s*[\w$]+\s*:\s*\S.*[,{(]\s*$/;
+const JSX_TEXT = /(?<=[\w"'}\])/])>(?!=)([^<>{}]+)(?=<|$)/g;
 const CODE_START = /^\s*(import|export|const|let|var|return|if|else|function|case|default|type|interface|class|for|while|await|async)\b/;
 export function segments(line, kind) {
   if (kind === 'md') return [line.replace(/`[^`]*`/g, '')];
-  const l = line.replace(/\b(?:class|className|href|src|id|key|d|viewBox|style|type|htmlFor|fill|stroke|rel|target|role|data-[\w-]+)=("[^"]*"|'[^']*'|\{[^}]*\})/g, blank);
+  const l = line.replace(/\b(?:class|className|href|src|id|key|d|viewBox|style|type|htmlFor|fill|stroke|rel|target|role|data-[\w-]+)=("[^"]*"|'[^']*'|\{[^}]*\})/g, (m, v) => m.slice(0, m.length - v.length) + v[0] + ' '.repeat(v.length - 2) + v[v.length - 1]);
   if (/^\s*(import|export\b.*\bfrom)\b/.test(l)) return [];
   const out = new Set();
   for (const m of l.matchAll(/(["'`])((?:\\.|(?!\1).)*)\1/g)) out.add(m[2]);
-  for (const m of l.matchAll(/(?<![=\-])>([^<>{}]+)(?=<|$)/g)) out.add(m[1]);
-  if (PURE_TEXT.test(l) && !CODE_START.test(l)) out.add(l.trim());
+  for (const m of l.matchAll(JSX_TEXT)) out.add(m[1]);
+  if (PURE_TEXT.test(l) && !CODE_START.test(l) && !CODEISH.test(l)) out.add(l.trim());
   return [...out];
 }
 
@@ -128,9 +130,11 @@ const HUE_NAMES = 'violet|purple|indigo|fuchsia|pink|blue|cyan|sky|teal';
 
 
 const TAG_RE = /<(\/?)([A-Za-z][\w.]*)((?:[^<>"'{}]|"[^"]*"|'[^']*'|\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})*?)(\/?)>/g;
+const CARD_EXCLUDE = new Set(['button', 'a', 'span', 'label', 'Button', 'Link', 'Badge']);
 const VOID = new Set(['img', 'br', 'hr', 'input', 'meta', 'link', 'source', 'wbr', 'area', 'col', 'embed', 'track']);
 const HTML_TAGS = new Set(['div', 'section', 'article', 'aside', 'main', 'header', 'footer', 'nav', 'ul', 'ol', 'li', 'span', 'p', 'a', 'button', 'form', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'dl', 'dt', 'dd', 'figure', 'label', 'fieldset', 'details', 'summary']);
 const TYPE_NAMES = new Set(['Array', 'Record', 'Promise', 'Map', 'Set', 'Partial', 'Omit', 'Pick', 'Readonly', 'Required', 'ReactNode', 'Ref', 'RefObject', 'Dispatch', 'SetStateAction', 'FC', 'Props']);
+const OVERLAY = /\b(?:fixed|absolute|sticky)\b|\bz-\d{2}|zIndex|role=["'](?:dialog|menu|tooltip|listbox)|popover|tooltip|modal|dropdown|drawer|dialog|\bmenu\b/i;
 const CHART_DEFAULTS = new Set(['36a2eb', 'ff6384', 'ffcd56', '4bc0c0', '9966ff', 'ff9f40', 'c9cbcf', '8884d8', '82ca9d', 'ffc658', 'ff7300', '7cb5ec', '434348', '90ed7d', 'f7a35c', '8085e9', 'f15c80', 'e4d354', '2b908f', 'f45b5b', '91e8e1', '2caffe', '544fc5', '00e272', 'fe6a35', '6b8abc', 'd568fb', '2ee0ca', 'fa4b42', '4e79a7', 'f28e2b', 'e15759', '76b7b2', '59a14f', 'edc948', 'b07aa1', 'ff9da7', '9c755f', 'bab0ac']);
 
 function colorsIn(line) {
@@ -178,7 +182,7 @@ function punctScan(ctx, test, msg, minWords) {
   ctx.lines.forEach((l, i) => {
     if (LOG_LINE.test(l)) return;
     const segs = segments(l, ctx.kind).filter((s) => !/^\s*[|:\- ]+$/.test(s));
-    if (PROSE_LINE.test(l) && !CODE_START.test(l) && !/;\s*$/.test(l)) segs.push(l.trim());
+    if (PROSE_LINE.test(l) && !CODE_START.test(l) && !CODEISH.test(l)) segs.push(l.trim());
     const hit = segs.some((s) => {
       const t = ctx.kind === 'md' ? s.replace(/^\s*(?:[-*+]|\d+\.)\s+/, '') : s;
       return t.trim().split(/\s+/).length >= minWords && test(t);
@@ -320,13 +324,14 @@ export const RULES = [
   {
     id: 'frosted-glass', severity: 'P1', title: 'Frosted glass (backdrop blur)',
     hint: 'Use a solid background. Keep blur only for real overlays that need it.',
-    scan: lineRe(/(?:-webkit-)?backdrop-filter\s*:|\bbackdrop-blur(?:-[\w[\]]+)?\b|backdropFilter\s*:/, 'backdrop blur on a surface'),
+    scan: (ctx) => eachLine(ctx, (l) => (/(?:-webkit-)?backdrop-filter\s*:(?!\s*none)|\bbackdrop-blur(?:-[\w[\]]+)?\b|backdropFilter\s*:/.test(l) && !(/\binset-0\b|inset\s*:\s*0/.test(l) && /bg-black|rgba\(0,\s*0,\s*0/.test(l)) ? 'backdrop blur on a surface' : null)),
   },
   {
     id: 'left-border-accent', severity: 'P1', title: 'Coloured left border accent',
     hint: 'Build hierarchy with spacing and type. If the border encodes severity, add an ignore comment with that reason.',
     scan: (ctx) => eachLine(ctx, (l) => {
       let m;
+      if (/(?:border-left|borderLeft|border-inline-start)[^;,}]*\btransparent\b/i.test(l)) return null;
       if (/\bborder-[ls]-(?:2|3|4|5|6|8)\b/.test(l) || /\bborder-[ls]-\[(?:[2-9]|\d{2,})px\]/.test(l)) return 'thick left border utility';
       if (/\bborder-l-(?:primary|accent|destructive|success|warning|info|brand|(?:red|orange|amber|yellow|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|pink|rose)-\d+)\b/.test(l)) return 'coloured left border utility';
       if ((m = l.match(/border-(?:left|inline-start)\s*:\s*(\d*\.?\d+)px\s+solid/i)) && +m[1] >= 2) return `${m[1]}px solid left border`;
@@ -384,7 +389,7 @@ export const RULES = [
         if (g1 <= 24 && g2 <= 24 && Math.abs(g1 - g2) <= 2) { out.push({ line: heads[k] + 1, msg: 'three sibling cards with the same icon, title, paragraph structure' }); k += 2; }
       }
       const icons = [];
-      L.forEach((l, i) => { if (/\bicon\s*:/.test(l)) { const w = L.slice(Math.max(0, i - 3), i + 4).join('\n'); if (/\b(?:title|heading|label|name)\s*:/.test(w) && /\b(?:description|desc|body|text|blurb)\s*:/.test(w)) icons.push(i); } });
+      L.forEach((l, i) => { if (/\bicon\s*:/.test(l) && !/typeof|;\s*$/.test(l)) { const w = L.slice(Math.max(0, i - 3), i + 4).join('\n'); if (/\b(?:title|heading|label|name)\s*:/.test(w) && /\b(?:description|desc|body|text|blurb)\s*:/.test(w)) icons.push(i); } });
       for (let k = 0; k + 2 < icons.length; k++) {
         const g1 = icons[k + 1] - icons[k], g2 = icons[k + 2] - icons[k + 1];
         if (g1 <= 12 && g2 <= 12) { out.push({ line: icons[k] + 1, msg: 'three data items with icon, title and description render as an icon-card row' }); break; }
@@ -420,16 +425,16 @@ export const RULES = [
       if (ctx.kind === 'style') return [];
       return eachLine(ctx, (l) => {
         const segs = segments(l, ctx.kind);
-        if (segs.some((s) => s.includes(EM) && !/^[A-Z][A-Z0-9 ]{1,24} — /.test(s.trim()))) return 'em dash in text';
+        if (segs.some((s) => s.includes(EM) && s.trim() !== EM && !/^[A-Z][A-Z0-9 ]{1,24} \u2014 /.test(s.trim()))) return 'em dash in text';
         if (/&mdash;|&#8212;|\\u2014/.test(l) && ctx.kind !== 'md') return 'em dash entity in text';
         return null;
       });
     },
   },
   {
-    id: 'label-dash', severity: 'P1', title: '"WORD — fragment" label',
+    id: 'label-dash', severity: 'P1', title: '"WORD \u2014 fragment" label',
     hint: 'Write a plain label. Put the second part in a separate element or drop it.',
-    scan: textRe(/^\s*[A-Z][A-Z0-9 ]{1,24}\s(?:—|&mdash;)\s\S/, 'caps label followed by an em dash fragment'),
+    scan: textRe(/^\s*[A-Z][A-Z0-9 ]{1,24}\s(?:\u2014|&mdash;)\s\S/, 'caps label followed by an em dash fragment'),
   },
   {
     id: 'middle-dot', severity: 'P2', title: 'Middle-dot joined meta string',
@@ -472,7 +477,7 @@ export const RULES = [
   {
     id: 'decorative-blob', severity: 'P2', title: 'Decorative blob or wave graphic',
     hint: 'Remove the decoration, or replace it with a graphic that explains the product.',
-    scan: lineRe(/\b(?:blobs?|waves?|squiggle)[\w-]*\.(?:svg|png|webp)\b|url\([^)]*(?:blob|wave)[^)]*\)/i, 'reference to a blob or wave graphic'),
+    scan: lineRe(/\b(?:blobs?|waves?|squiggle)[\w-]*\.(?:svg|png|webp)\b/i, 'reference to a blob or wave graphic'),
   },
   {
     id: 'grain-noise', severity: 'P2', title: 'Grain or noise texture',
@@ -513,7 +518,8 @@ export const RULES = [
       for (const b of declBlocks(ctx)) {
         const fg = b.decls.color, bg = b.decls['background-color'] || b.decls.background;
         if (!fg || !bg) continue;
-        const r = contrastFromPairs(fg, bg, isLarge(b.decls['font-size'] ? 'font-size:' + b.decls['font-size'] : ''), /disabled|placeholder/.test(b.selector), b.selector);
+        if (/disabled|\[aria-disabled/.test(b.selector)) continue;
+        const r = contrastFromPairs(fg, bg, isLarge(b.decls['font-size'] ? 'font-size:' + b.decls['font-size'] : ''), /placeholder/.test(b.selector), b.selector);
         if (r) out.push({ line: b.line, ...r });
       }
       ctx.lines.forEach((l, i) => {
@@ -527,7 +533,8 @@ export const RULES = [
           const tokens = l.split(/[\s"'`]+/).filter((x) => x.startsWith(prefix) && (prefix || !x.includes(':'))).map((x) => x.slice(prefix.length));
           const tc = tokens.find((x) => x.startsWith('text-') && twColor(x.slice(5))), bc = tokens.find((x) => x.startsWith('bg-') && twColor(x.slice(3)));
           if (tc && bc) {
-            const r = contrastFromPairs(twColor(tc.slice(5)), twColor(bc.slice(3)), isLarge(l), /disabled|placeholder/.test(l), (prefix ? 'dark mode ' : '') + `${tc} ${bc}`);
+            if (/disabled|not-allowed/.test(l)) continue;
+            const r = contrastFromPairs(twColor(tc.slice(5)), twColor(bc.slice(3)), isLarge(l), /placeholder/.test(l), (prefix ? 'dark mode ' : '') + `${tc} ${bc}`);
             if (r) out.push({ line: i + 1, ...r });
           }
         }
@@ -634,11 +641,12 @@ export const RULES = [
     hint: 'Use a border or a flat tonal step. Keep shadows for overlays such as menus and drawers.',
     scan(ctx) {
       const out = [];
+      const overlay = (line) => OVERLAY.test(ctx.lines.slice(Math.max(0, line - 4), line + 1).join('\n'));
       for (const s of shadowsIn(ctx)) {
-        if (s.inset || s.glow) continue;
+        if (s.inset || s.glow || overlay(s.line)) continue;
         if (s.blur >= 24 || s.y >= 12) out.push({ line: s.line, msg: `shadow with ${s.blur}px blur and ${s.y}px offset` });
       }
-      for (const [i, l] of ctx.lines.entries()) if (/\b(?:hover:|group-hover:)?shadow-(?:xl|2xl)\b/.test(l) && !/\bhover:shadow/.test(l)) out.push({ line: i + 1, msg: 'large Tailwind shadow' });
+      for (const [i, l] of ctx.lines.entries()) if (/\bshadow-(?:xl|2xl)\b/.test(l) && !/\bhover:shadow/.test(l) && !overlay(i + 1)) out.push({ line: i + 1, msg: 'large Tailwind shadow' });
       if (out.length > ctx.opts.maxHeavyShadows) out.unshift({ line: out[0].line, severity: 'P1', msg: `${out.length} heavy shadows in one file (limit ${ctx.opts.maxHeavyShadows})` });
       return out;
     },
@@ -653,8 +661,9 @@ export const RULES = [
         const [, close, name, attrs, self] = m;
         if (name.length === 1 || TYPE_NAMES.has(name) || VOID.has(name.toLowerCase())) continue;
         if (!/^[A-Z]/.test(name) && !HTML_TAGS.has(name)) continue;
+        if (CARD_EXCLUDE.has(name)) continue;
         if (close) { let k = stack.length - 1; while (k >= 0 && stack[k].name !== name) k--; if (k >= 0) stack.length = k; continue; }
-        const card = name === 'Card' || /\b(?:class|className)\s*=\s*["'{`][^"'`]*(?:\bcard\b|[\w]-card\b|\bcard-|\brounded-(?:md|lg|xl|2xl|3xl)\b[^"'`]*\bborder\b[^"'`]*\bbg-|\bborder\b[^"'`]*\brounded-(?:md|lg|xl|2xl|3xl)\b[^"'`]*\bbg-)/.test(attrs);
+        const card = name === 'Card' || /\b(?:class|className)\s*=\s*["'{`][^"'`]*(?:\bcard\b|[\w]-card\b|\bcard-|(?=[^"'`]*\bp-(?:[4-9]|1\d)\b)(?=[^"'`]*\bborder\b)(?=[^"'`]*\brounded-(?:md|lg|xl|2xl|3xl)\b)(?=[^"'`]*\bbg-))/.test(attrs);
         if (card) { total++; if (!flagged && stack.some((s) => s.card)) { out.push({ line: ctx.lineOf(m.index), msg: 'card-like container inside another card-like container' }); flagged = true; } }
         if (!self) stack.push({ name, card });
       }
@@ -934,7 +943,7 @@ export function applyBaseline(findings, baseline) {
 /* ---------- safe fixes ---------- */
 
 export const SAFE_FIXES = [
-  { id: 'em-dash', what: 'replace " — " with ", " in JSX/HTML text nodes and Markdown prose (never in string literals or attributes)' },
+  { id: 'em-dash', what: 'replace " \u2014 " with ", " in JSX/HTML text nodes and Markdown prose (never in string literals or attributes)' },
   { id: 'arrow-suffix', what: 'remove a trailing arrow glyph from JSX/HTML text nodes' },
 ];
 
@@ -950,15 +959,15 @@ export function safeFix(file, text, cfg = {}) {
     const spans = [];
     if (kind === 'md') spans.push([0, line.length]);
     else {
-      for (const m of s.matchAll(/(?<![=\-])>([^<>{}]+)(?=<|$)/g)) spans.push([m.index + 1, m.index + m[0].length]);
-      if (PURE_TEXT.test(s) && !CODE_START.test(s) && !spans.length) spans.push([0, line.length]);
+      for (const m of s.matchAll(JSX_TEXT)) spans.push([m.index + 1, m.index + m[0].length]);
+      if (PURE_TEXT.test(s) && !CODE_START.test(s) && !CODEISH.test(s) && !spans.length) spans.push([0, line.length]);
     }
     let res = line;
     for (const [a, b] of spans.sort((x, y) => y[0] - x[0])) {
       let seg = res.slice(a, b);
-      if (/^\s*[A-Z][A-Z0-9 ]{1,24} — /.test(seg)) continue;
+      if (/^\s*[A-Z][A-Z0-9 ]{1,24} \u2014 /.test(seg)) continue;
       let n = seg;
-      if (!off('em-dash')) n = n.replace(/(\S) — (\S)/g, '$1, $2');
+      if (!off('em-dash')) n = n.replace(/(\S) \u2014 (\S)/g, '$1, $2');
       if (kind !== 'md' && !off('arrow-suffix')) n = n.replace(/(\S)\s*(?:→|&rarr;)(\s*)$/, '$1$2');
       if (n !== seg) res = res.slice(0, a) + n + res.slice(b);
     }

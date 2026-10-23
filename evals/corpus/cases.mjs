@@ -3,9 +3,9 @@
 //   N(id, file, code, ...rules)        a hard negative. None of the listed rules may fire.
 // Only the rules named in a case are scored for that case.
 // Dashes and emoji are written as escapes so the repo's prose check stays clean.
-const EM = '—';
+const EM = '\u2014';
 const ROCKET = '\u{1F680}';
-const SPARKLE = '✨';
+const SPARKLE = '\u2728';
 const FLAG = '\u{1F1F9}\u{1F1F7}';
 
 export const cases = [];
@@ -289,3 +289,17 @@ project('radius-few', [{ name: 'a.tsx', code: 'const a = <div className="rounded
 
 /* ignore comments */
 P('ignore-needs-reason', 'a.css', '.a { color: #6366f1; } /* ui-slop-ignore default-indigo */', 'ignore-without-reason:1');
+
+/* regressions found while reviewing real code */
+N('blob-object-url', 'a.tsx', 'const url = URL.createObjectURL(blob);', 'decorative-blob');
+N('emdash-empty-value', 'a.tsx', `const a = <td>{value ?? "${EM}"}</td>;`, 'em-dash');
+N('lborder-transparent', 'a.tsx', 'const s = { borderLeft: "2px solid transparent" };', 'left-border-accent');
+N('glass-none', 'a.css', '.card { backdrop-filter: none; }', 'frosted-glass');
+N('glass-modal-scrim', 'a.tsx', 'const a = <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />;', 'frosted-glass');
+N('shadow-dropdown', 'a.tsx', 'const a = <div className="absolute right-0 top-full shadow-2xl" />;', 'heavy-shadow');
+N('cards-callout-in-card', 'a.tsx', 'const a = (\n  <Card>\n    <div className="rounded-lg border bg-red-50 px-3 py-2 text-xs">Error</div>\n  </Card>\n);', 'nested-cards');
+N('cards-button-in-card', 'a.tsx', 'const a = (\n  <Card>\n    <button className="rounded-lg border bg-white p-4">Go</button>\n  </Card>\n);', 'nested-cards');
+N('iconcards-type-def', 'a.tsx', 'interface Item {\n  icon: typeof Server;\n  title: string;\n  description: string;\n}\ninterface B {\n  icon: typeof Lock;\n  title: string;\n  description: string;\n}', 'icon-card-row');
+N('contrast-disabled-soft', 'a.tsx', 'const c = "bg-gray-100 text-gray-400 cursor-not-allowed";', 'low-contrast');
+N('dash-arithmetic', 'a.tsx', 'const w = a >= b ? a - b : null;\nconst h = {\n  width: g.maxX - g.minX + pad * 2,\n};', 'punct-dash-separator');
+N('colon-object-key', 'a.tsx', 'const o = {\n  HIGH: true,\n  Icon: IconCat,\n};', 'punct-colon-in-copy');
