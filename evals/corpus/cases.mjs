@@ -537,3 +537,9 @@ N('operate-override-by-path', 'app/console/page.tsx', EYEBROW_SRC, 'eyebrow-pill
 withConfig({ profile: 'persuade', profileOverrides: [{ paths: ['app/console/**'], profile: 'operate' }] });
 P('persuade-override-by-path', 'app/home/page.tsx', EYEBROW_SRC, 'eyebrow-pill:3');
 withConfig({ profile: 'operate', profileOverrides: [{ paths: ['app/home/**'], profile: 'persuade' }] });
+
+/* regressions found while running the new rules on real dashboards */
+N('scale0-function-call', 'a.tsx', 'const baselineY = scale(0) ?? innerHeight;', 'scale-zero-entrance');
+P('scale0-transform-string', 'a.tsx', 'const s = { transform: "scale(0)" };', 'scale-zero-entrance:1');
+N('dot-pulse-14px-utility', 'a.tsx', 'const a = <div className="h-3.5 w-3.5 animate-pulse rounded-full bg-zinc-300" />;', 'pulsing-status-dot');
+N('ghost-toast', 'a.tsx', 'const a = <div className="toast pointer-events-auto flex w-80 rounded-lg border px-4 py-3 shadow-xl" />;', 'ghost-card');

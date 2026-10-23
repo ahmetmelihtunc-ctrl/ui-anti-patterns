@@ -136,6 +136,7 @@ const VOID = new Set(['img', 'br', 'hr', 'input', 'meta', 'link', 'source', 'wbr
 const HTML_TAGS = new Set(['div', 'section', 'article', 'aside', 'main', 'header', 'footer', 'nav', 'ul', 'ol', 'li', 'span', 'p', 'a', 'button', 'form', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'dl', 'dt', 'dd', 'figure', 'label', 'fieldset', 'details', 'summary']);
 const TYPE_NAMES = new Set(['Array', 'Record', 'Promise', 'Map', 'Set', 'Partial', 'Omit', 'Pick', 'Readonly', 'Required', 'ReactNode', 'Ref', 'RefObject', 'Dispatch', 'SetStateAction', 'FC', 'Props']);
 const OVERLAY = /\b(?:fixed|absolute|sticky)\b|\bz-\d{2}|zIndex|role=["'](?:dialog|menu|tooltip|listbox)|popover|tooltip|modal|dropdown|drawer|dialog|\bmenu\b/i;
+const FLOATING = new RegExp(OVERLAY.source + '|toast|snackbar|notification|popup|\\bsheet\\b|combobox|command-palette', 'i');
 const CHART_DEFAULTS = new Set(['36a2eb', 'ff6384', 'ffcd56', '4bc0c0', '9966ff', 'ff9f40', 'c9cbcf', '8884d8', '82ca9d', 'ffc658', 'ff7300', '7cb5ec', '434348', '90ed7d', 'f7a35c', '8085e9', 'f15c80', 'e4d354', '2b908f', 'f45b5b', '91e8e1', '2caffe', '544fc5', '00e272', 'fe6a35', '6b8abc', 'd568fb', '2ee0ca', 'fa4b42', '4e79a7', 'f28e2b', 'e15759', '76b7b2', '59a14f', 'edc948', 'b07aa1', 'ff9da7', '9c755f', 'bab0ac']);
 
 function colorsIn(line) {
@@ -837,9 +838,9 @@ export const RULES = [
     hint: 'Declare elevation once. Use the border for resting cards and keep the shadow for overlays.',
     scan(ctx) {
       const out = [];
-      const overlay = (line) => OVERLAY.test(ctx.lines.slice(Math.max(0, line - 4), line + 1).join('\n'));
+      const overlay = (line) => FLOATING.test(ctx.lines.slice(Math.max(0, line - 4), line + 1).join('\n'));
       for (const b of declBlocks(ctx)) {
-        if (!/^\d*\.?\d+px\s+solid\b/.test(b.decls.border || '') || !b.decls['box-shadow'] || OVERLAY.test(b.selector)) continue;
+        if (!/^\d*\.?\d+px\s+solid\b/.test(b.decls.border || '') || !b.decls['box-shadow'] || FLOATING.test(b.selector)) continue;
         const wide = shadowsIn({ text: `box-shadow:${b.decls['box-shadow']};`, lineOf: () => b.line }).some((s) => !s.inset && s.blur >= 16);
         if (wide) out.push({ line: b.line, msg: `${b.selector} has a border and a wide soft shadow` });
       }
@@ -898,7 +899,7 @@ export const RULES = [
       const out = eachLine(ctx, (l) => {
         if (!/\brounded-full\b/.test(l) || /\b(?:h|w|size)-(?:[4-9]|\d{2,})\b|\b(?:h|w|size)-\[(?:1[3-9]|[2-9]\d|\d{3,})px\]/.test(l)) return null;
         if (/\banimate-ping\b/.test(l)) return 'ping animation on a dot';
-        return /\banimate-pulse\b/.test(l) && /\b(?:h|w|size)-(?:0\.5|1|1\.5|2|2\.5|3)\b/.test(l) ? 'pulse animation on a small dot' : null;
+        return /\banimate-pulse\b/.test(l) && /\b(?:h|w|size)-(?:0\.5|1\.5|2\.5|1|2|3)(?![\w.])/.test(l) ? 'pulse animation on a small dot' : null;
       });
       for (const b of declBlocks(ctx)) {
         const px = (k) => { const m = (b.decls[k] || '').match(/^(\d*\.?\d+)px$/); return m ? +m[1] : null; };
@@ -934,7 +935,7 @@ export const RULES = [
   {
     id: 'scale-zero-entrance', severity: 'P2', title: 'Element scales up from zero',
     hint: 'Start from 0.95 to 0.98 together with opacity. Nothing in the physical world grows from a point.',
-    scan: (ctx) => eachLine(ctx, (l) => (/scale\(\s*0(?:\.0+)?\s*(?:,\s*0(?:\.0+)?\s*)?\)/.test(l) || /(?<![\w-])(?:[\w-]+:)*scale-0(?![\w.-])/.test(l) || /\bscale\s*:\s*0\s*[,}]/.test(l) ? 'scale starts at zero' : null)),
+    scan: (ctx) => eachLine(ctx, (l) => (/(?:\b(?:transform|translate\w*|rotate|matrix)\b[^;\n]*|["'`]\s*)scale\(\s*0(?:\.0+)?\s*(?:,\s*0(?:\.0+)?\s*)?\)/.test(l) || /(?<![\w-])(?:[\w-]+:)*scale-0(?![\w.-])/.test(l) || /\bscale\s*:\s*0\s*[,}]/.test(l) ? 'scale starts at zero' : null)),
   },
   {
     id: 'bounce-easing', severity: 'P2', title: 'Overshoot, bounce or elastic easing',
