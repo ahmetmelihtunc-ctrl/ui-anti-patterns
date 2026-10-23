@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lintText, finalizeProject, RULES, parseColor, contrastRatio, globToRegex, safeFix, buildBaseline, applyBaseline } from '../skills/ui-anti-patterns/scripts/ui-slop-lint.mjs';
+import { lintText, finalizeProject, RULES, RULE_IDS, parseColor, contrastRatio, globToRegex, safeFix, buildBaseline, applyBaseline } from '../skills/ui-anti-patterns/scripts/ui-slop-lint.mjs';
+import fs from 'node:fs';
 import { cases } from '../evals/corpus/cases.mjs';
 
 function run(c) {
@@ -110,4 +111,11 @@ test('operate profile relaxes the tracked caps limit, persuade keeps the default
 test('only rules marked landing are skipped by the operate profile', () => {
   const landing = RULES.filter((r) => r.landing).map((r) => r.id).sort();
   assert.deepEqual(landing, ['accent-word-heading', 'aphoristic-cadence', 'eyebrow-pill', 'icon-card-row', 'mono-heading', 'serif-italic-emphasis']);
+});
+
+test('rule ids named in vocabulary.md exist', () => {
+  const text = fs.readFileSync(new URL('../skills/ui-anti-patterns/references/vocabulary.md', import.meta.url), 'utf8');
+  const allowed = new Set(RULE_IDS);
+  const unknown = [...text.matchAll(/`([a-z]+(?:-[a-z]+)+)`/g)].map((m) => m[1]).filter((id) => !allowed.has(id));
+  assert.deepEqual([...new Set(unknown)], []);
 });

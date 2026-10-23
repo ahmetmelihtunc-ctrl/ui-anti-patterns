@@ -84,6 +84,8 @@ An ignore comment without a reason is itself a finding.
 - `references/fixes.md` for before and after recipes in CSS, Tailwind and React.
 - `references/process.md` for plan-first work, small commits and the two-attempt rule.
 - `references/checklist.md` for the reviewer checklist and tell count.
+- `references/rendered-pass.md` for the screenshot checks that the linter cannot do.
+- `references/vocabulary.md` for naming visual problems and design moves, mapped to rule ids.
 - `references/slop-vs-fixed-dashboard.md` for a worked comparison of two dashboards.
 - `scripts/ui-slop-lint.mjs` is the linter. Run it with `--help` for options, `--list-rules` for the table.
 - `hooks/` holds the Claude Code hook, the pre-commit script, a GitHub Action and a guard test.
