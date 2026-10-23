@@ -84,6 +84,7 @@ const matchAny = (list, f) => (list || []).some((g) => globToRegex(g).test(f));
 
 function blank(s) { return s.replace(/[^\n]/g, ' '); }
 export function stripComments(text, ext) {
+  if (ext === 'md') return text.replace(/^---\n[\s\S]*?\n---/, blank).replace(/^(\s*)(```|~~~)[\s\S]*?^\s*\2.*$/gm, blank).replace(/<!--[\s\S]*?-->/g, blank);
   let t = text.replace(/\/\*[\s\S]*?\*\//g, blank);
   if (ext !== 'css') t = t.replace(/(^|[\s;{},])\/\/.*$/gm, (m, p) => p + blank(m.slice(p.length)));
   if (ext !== 'css' && ext !== 'scss') t = t.replace(/<!--[\s\S]*?-->/g, blank);
@@ -890,7 +891,8 @@ const BLOB_NAME = /^(?:.*[-_])?(?:blobs?|waves?|squiggle)(?:[-_].*)?\.(?:svg|png
 
 export function collectFiles(targets, root, cfg = {}) {
   const exts = new Set(cfg.extensions || DEFAULT_EXT);
-  const ignore = [...DEFAULT_IGNORE, ...(cfg.ignore || [])];
+  const ignore = [...DEFAULT_IGNORE, ...(cfg.ignore || []).map((g) => (typeof g === 'string' ? g : g.path))];
+  for (const g of cfg.ignore || []) if (typeof g === 'object' && !g.reason) throw new Error(`ignore entry ${g.path} needs a reason`);
   const md = cfg.markdown || [];
   const files = [];
   const rel = (p) => path.relative(root, p).split(path.sep).join('/');
@@ -1053,8 +1055,9 @@ export function main(argv) {
   const targets = args.paths.length ? args.paths : [root];
 
   if (args.fix) {
-    let total = 0;
-    for (const f of collectFiles(targets, root, cfg)) {
+    let total = 0, list;
+    try { list = collectFiles(targets, root, cfg); } catch (e) { process.stderr.write(e.message + '\n'); return 2; }
+    for (const f of list) {
       if (f.nameOnly) continue;
       const src = fs.readFileSync(f.abs, 'utf8'), r = safeFix(f.rel, src, cfg);
       if (!r.changes.length) continue;
@@ -1066,13 +1069,16 @@ export function main(argv) {
     return 0;
   }
 
-  const { findings, suppressed, scanned } = lintFiles(targets, root, cfg);
+  let result;
+  try { result = lintFiles(targets, root, cfg); } catch (e) { process.stderr.write(e.message + '\n'); return 2; }
+  const { findings, suppressed, scanned } = result;
   if (args.update) {
     if (!args.baseline) { process.stderr.write('--update-baseline needs --baseline <file>\n'); return 2; }
     fs.writeFileSync(path.resolve(args.baseline), JSON.stringify(buildBaseline(findings), null, 2) + '\n');
     process.stdout.write(`baseline written: ${findings.length} findings in ${args.baseline}\n`);
     return 0;
   }
+  if (!args.baseline && cfg.baseline && !args.update && fs.existsSync(path.resolve(root, cfg.baseline))) args.baseline = path.resolve(root, cfg.baseline);
   if (args.baseline) {
     const bp = path.resolve(args.baseline);
     if (!fs.existsSync(bp)) { process.stderr.write(`baseline not found: ${args.baseline} (create it with --update-baseline)\n`); return 2; }

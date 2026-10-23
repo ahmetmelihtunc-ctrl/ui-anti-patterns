@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/skills/ui-anti-patterns/hooks/ui-slop-hook.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

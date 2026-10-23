@@ -1,0 +1,14 @@
+{
+  "name": "ui-anti-patterns-skill",
+  "version": "0.1.0",
+  "description": "A Claude Code skill and dependency-free linter that finds, fixes and prevents generic generated-looking UI.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test",
+    "eval": "node evals/run-detection.mjs",
+    "lint-self": "node skills/ui-anti-patterns/scripts/ui-slop-lint.mjs examples/fixed --fail-on P2"
+  },
+  "files": ["skills", "examples", "docs", "NOTICE", "LICENSE"]
+}

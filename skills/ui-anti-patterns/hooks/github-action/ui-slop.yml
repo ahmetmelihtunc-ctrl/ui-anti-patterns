@@ -1,0 +1,30 @@
+# Copy to .github/workflows/ui-slop.yml
+name: ui-slop
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Path to the linter inside your repository. Vendor the skill folder or install it first.
+      - name: Write SARIF report
+        run: node .claude/skills/ui-anti-patterns/scripts/ui-slop-lint.mjs --sarif --baseline ui-slop.baseline.json > ui-slop.sarif
+        continue-on-error: true
+      - name: Upload to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ui-slop.sarif
+          category: ui-slop
+      - name: Fail on new P0 or P1 findings
+        run: node .claude/skills/ui-anti-patterns/scripts/ui-slop-lint.mjs --baseline ui-slop.baseline.json --fail-on P1

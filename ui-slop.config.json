@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    { "path": "examples/bad.html", "reason": "intentional before example" },
+    { "path": "examples/bad.tsx", "reason": "intentional before example" },
+    { "path": "evals/**", "reason": "labelled corpus of bad snippets" },
+    { "path": "README.md", "reason": "the front page is an intentional parody of generated READMEs" }
+  ],
+  "markdown": ["docs/**/*.md", "skills/**/*.md", "CONTRIBUTING.md", "CHANGELOG.md", "README.tr.md"],
+  "rules": { "buzzword": "off", "placeholder-copy": "off", "invented-metric": "off", "emoji-ui": "off", "default-indigo": "off", "hex-excess": "off" }
+}
