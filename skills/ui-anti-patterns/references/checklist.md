@@ -1,6 +1,6 @@
 # Reviewer checklist
 
-Use it on a rendered screen at desktop width and at 390 pixels. Count the tells. About three is normal. Eight or more reads as generic. Review by group because tells arrive together.
+Use it on a rendered screen at desktop width and at 390 pixels, after the rendered pass in `rendered-pass.md`. Count the tells. About three is normal. Eight or more reads as generic. Review by group because tells arrive together.
 
 ## Colour
 
@@ -28,7 +28,8 @@ Use it on a rendered screen at desktop width and at 390 pixels. Count the tells.
 - [ ] Not everything is a card. Whitespace and dividers do some of the grouping.
 - [ ] At least two radius steps.
 - [ ] No eyebrow pill above the headline.
-- [ ] Buttons follow one system, have real labels, and show hover, pressed and focus states.
+- [ ] Buttons follow one system, name the action ("Run scan", not "Submit"), and show hover, pressed and focus states.
+- [ ] Focus is visible on every control, in both themes.
 - [ ] Touch targets are at least 44 pixels on phones.
 - [ ] Spacing sits on one scale.
 
@@ -46,6 +47,16 @@ Use it on a rendered screen at desktop width and at 390 pixels. Count the tells.
 - [ ] No invented numbers. Every figure has a source and a time, or is labelled as sample data.
 - [ ] No filler text. Empty states name the next action.
 - [ ] No claim of coverage or safety without evidence.
+
+## Data screens
+
+- [ ] Numbers are right-aligned, use tabular figures and a fixed number of decimals per column.
+- [ ] KPIs are one divided strip, and the figure that answers the screen's question leads.
+- [ ] Every delta says its window, and a change from nothing is not shown as a percentage.
+- [ ] Green and red appear only on real status, never on a zero or an undefined change.
+- [ ] A real zero, a missing value and an unknown value each look different from the others.
+- [ ] Loading, error, stale and empty each have their own look, and an error keeps the last good data and its time.
+- [ ] Counts follow the active filter, and figures that appear twice match.
 
 ## Recording the result
 

@@ -23,6 +23,31 @@ For a real product, design from a wireframe and the design system first, then bu
 
 Structured, digital styles are easy to produce. Organic ones are not, so do not promise them.
 
+## States and data display
+
+Decide the look of every state before building the screen, because a missing state is filled with whatever the framework renders by default. Each state below has its own look, and none may borrow another's.
+
+| State | Show it as | Never |
+|---|---|---|
+| Real zero | the number, in the normal style ("0", "0 critical") | dimmed to look missing, or coloured as an alert |
+| Missing, not applicable | a small grey dash | a dash at full value size, which reads as loading |
+| Unknown, not measured | the words "Not scanned" or "Unknown" with the reason | a green "OK" or a zero |
+| Loading | the final layout with flat bars at real size, rows keeping their pitch | a spinner in the middle of content, or layout shift when data lands |
+| Error | one sentence inside the block that failed, with the time of the last good data and a retry control | a full-screen banner, or an empty value |
+| Stale | a freshness stamp ("Updated 09:14") and a refresh control, or a quiet notice when it cannot refresh | fresh-looking numbers with no time |
+| Empty | the frame and header stay and one sentence says what to do next | a decorative illustration, or "nothing here" |
+
+Rules for tables and figures.
+
+- Right-align numbers and use tabular figures, so digits line up and sizes compare at a glance.
+- Use a fixed number of decimals per column, and one unit per column, written in the header.
+- Show KPIs as one strip in a single bordered container with dividers, not one card per figure. The figure that answers the screen's question leads by at least one size step.
+- State the window of every delta ("+4 vs last 7 days"). A change from nothing is "+4 (new)" or a dash, never "up 100 percent".
+- Use status colour only for status. Green and red do not mark a zero or an undefined change. Do not colour a number just because it is large.
+- Counts are recomputed from the rows in the current view, so a filter changes the totals.
+- A limit or usage bar is drawn at the true ratio with both ends labelled.
+- Show provenance next to a figure that someone might act on, such as its source and the time it was taken.
+
 ## Small commits
 
 - One theme per commit (spacing, buttons, colour, copy, motion).
