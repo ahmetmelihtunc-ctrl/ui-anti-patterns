@@ -5,7 +5,7 @@ A Claude Code skill and a linter that find the habits that make an interface loo
 The tool has three parts.
 
 - A **skill** (`skills/ui-anti-patterns`) that tells Claude when and how to check, fix and guard UI work.
-- A **linter** (`scripts/ui-slop-lint.mjs`) with 44 rules. It needs Node 20 or newer and has no dependencies.
+- A **linter** (`scripts/ui-slop-lint.mjs`) with 61 rules. It needs Node 20 or newer and has no dependencies.
 - **Guards** in `hooks/`. A Claude Code hook, a git pre-commit script, a GitHub Action and a test snippet.
 
 ## Install as a Claude Code skill
@@ -154,21 +154,38 @@ Copy `hooks/github-action/ui-slop.yml` to `.github/workflows/ui-slop.yml` and ad
 
 `hooks/guard.test.example.mjs` is a Vitest or Jest test that fails when the working tree has findings outside the baseline.
 
+## Compatibility with other design skills
+
+This skill can sit next to other design skills and checkers. A few facts decide how to combine them.
+
+- Claude Code runs every hook that matches an event at the same time, and the order is not guaranteed. Two hooks on `PostToolUse` for `Edit` and `Write` will both run on the same edit, and their messages can arrive in either order.
+- A hook that exits with code 2 sends its message back to Claude and asks for a fix. Two blocking hooks can give two different instructions for the same change.
+- Suppression comments belong to one tool. A comment that silences a finding here does not silence the same finding in another tool, so a deliberate exception may need one comment per tool.
+
+What to do.
+
+1. Keep exactly one blocking hook. Use this skill's hook for that, and treat any other hook as advisory or leave it off.
+2. Do not enable another pack's hooks before you have read what they run. Check which commands they start, whether they download or update anything, whether they contact a network address, which files they write into the project, and how long they may run. A hook is code that runs on every edit, so it deserves the same review as any dependency.
+3. Do not copy hook settings from a third party into your user settings without reading them. Merge entries by hand and keep your existing ones.
+4. If two tools report the same problem, fix it once and use `references/vocabulary.md` to match the names. It lists common names for visual problems next to the rule ids in this skill.
+5. Guidance-only skills that contain no scripts and no hooks are the safest to install together. Make it clear in your project notes which skill runs first. For slop, run this skill first, then read the other guidance for the deeper design question.
+6. Where another tool reports a rule that is wrong for your product, such as a monospace heading for a resource name, silence that one rule in that tool's own config rather than turning the whole tool off.
+
 ## Safe fixes
 
 `--fix-safe` changes text only. It replaces a spaced em dash in a JSX or HTML text node with a comma, and removes a trailing arrow glyph from a text node. It never edits string literals, attributes, CSS or code. It is a dry run until you add `--write`. Read the diff, because tests that assert the old wording will need an update and a comma can create a run-on sentence.
 
 ## Rules
 
-44 rules in six groups. Details, detection and fixes are in `skills/ui-anti-patterns/references/rules.md`.
+61 rules in six groups. Details, detection and fixes are in `skills/ui-anti-patterns/references/rules.md`.
 
 | Group | Rules |
 |---|---|
-| Colour | default-indigo, two-stop-gradient, gradient-text, default-chart-palette, hex-excess, accent-overuse, low-contrast |
-| Type | tiny-font, default-font-only, serif-italic-emphasis, accent-word-heading, mono-heading, caps-tracked, weak-hierarchy |
-| Components | emoji-ui, frosted-glass, side-border-accent, heavy-shadow, neon-glow, nested-cards, uniform-radius, icon-card-row, kpi-card-row, eyebrow-pill, small-touch-target, off-scale-spacing |
-| Motion and finish | scroll-entrance, cursor-glow, hover-opacity, floating-animation, gradient-orb, grain-noise, decorative-blob, placeholder-image |
-| Copy | em-dash, label-dash, middle-dot, arrow-suffix, placeholder-copy, invented-metric, buzzword |
+| Colour | default-indigo, two-stop-gradient, gradient-text, default-chart-palette, hex-excess, accent-overuse, low-contrast, cream-clay-palette |
+| Type | tiny-font, default-font-only, serif-italic-emphasis, accent-word-heading, mono-heading, caps-tracked, weak-hierarchy, extreme-negative-tracking |
+| Components | emoji-ui, frosted-glass, side-border-accent, heavy-shadow, neon-glow, nested-cards, uniform-radius, icon-card-row, kpi-card-row, eyebrow-pill, small-touch-target, off-scale-spacing, hard-offset-shadow, ghost-card, focus-ring-removed, missing-tabular-nums |
+| Motion and finish | scroll-entrance, cursor-glow, hover-opacity, floating-animation, gradient-orb, grain-noise, decorative-blob, placeholder-image, pulsing-status-dot, marquee, transition-all, ease-in-ui, scale-zero-entrance, bounce-easing, radial-glow-background, grid-line-background, stripes-gradient |
+| Copy | em-dash, label-dash, middle-dot, arrow-suffix, placeholder-copy, invented-metric, buzzword, aphoristic-cadence, placeholder-person-data |
 | Punctuation | punct-semicolon-in-copy, punct-colon-in-copy, punct-dash-separator |
 
 ## Limits and false-positive policy
