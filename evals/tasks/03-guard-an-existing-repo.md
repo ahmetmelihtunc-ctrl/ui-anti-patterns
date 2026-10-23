@@ -4,7 +4,7 @@
 A front-end repository with at least 20 existing findings.
 
 ## Prompt
-Our UI keeps drifting toward generic AI-looking patterns. Set up protection so new violations are caught, without forcing us to fix the old ones first.
+Our UI keeps drifting toward generic AI-looking patterns. Set up protection so new findings are caught, without forcing us to fix the old ones first.
 
 ## Pass rubric (one point each, 7 total)
 1. Adds a `ui-slop.config.json` that names the real token files.

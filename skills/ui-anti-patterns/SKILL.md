@@ -23,7 +23,7 @@ Do not use it for backend work, logos, illustration, brand strategy or accessibi
 
 **CHECK** reports what is wrong and how bad it is. Run the linter, read the report, add a manual pass with `references/checklist.md`, and count the tells per screen. About three tells is normal. Eight or more reads as generic.
 
-**FIX** removes violations. Work by theme, not by file. Use the recipes in `references/fixes.md`. Commit one theme at a time. Safe mechanical text fixes are available through `--fix-safe`.
+**FIX** removes findings. Work by theme, not by file. Use the recipes in `references/fixes.md`. Commit one theme at a time. Safe mechanical text fixes are available through `--fix-safe`.
 
 **GUARD** stops regressions. Write the plan before coding, record legacy findings in a baseline, and install the hook, pre-commit script, CI job or guard test from `hooks/`. Only new findings block.
 

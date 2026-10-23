@@ -1,6 +1,6 @@
 # Fix recipes
 
-Before and after patterns for the rules most often hit. Fix order that pays off most. Spacing, then buttons, then colour. Work by theme and commit each theme on its own.
+Before and after patterns for the rules that fire most often. Fix order that pays off most. Spacing, then buttons, then colour. Work by theme and commit each theme on its own.
 
 ## Spacing (off-scale-spacing)
 

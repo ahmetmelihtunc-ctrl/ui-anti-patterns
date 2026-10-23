@@ -2,7 +2,7 @@
 
 Each rule has an id, a default severity, and a short entry. Ids are the names used in reports, in `ui-slop.config.json` and in ignore comments. Run `node scripts/ui-slop-lint.mjs --list-rules` for the live table.
 
-Terms used throughout. A **finding** is one reported violation. A **rule** is one check. The **baseline** is a file that records existing findings so only new ones fail. **Severity** is P0, P1 or P2.
+Terms used throughout. A **finding** is one reported problem at one location. A **rule** is one detection. The **baseline** is a file that records existing findings so only new ones fail. **Severity** is P0, P1 or P2.
 
 ## Colour
 

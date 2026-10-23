@@ -63,9 +63,9 @@ test('rule overrides change or disable severity', () => {
 });
 
 test('glob matching works on suffixes', () => {
-  assert.ok(globToRegex('app/lib/carbon.ts').test('web/app/lib/carbon.ts'));
+  assert.ok(globToRegex('app/lib/tokens.ts').test('web/app/lib/tokens.ts'));
   assert.ok(globToRegex('**/*.test.*').test('a/b/x.test.tsx'));
-  assert.ok(!globToRegex('carbon.ts').test('app/notcarbon.ts'));
+  assert.ok(!globToRegex('tokens.ts').test('app/nottokens.ts'));
 });
 
 test('baseline absorbs existing findings and exposes new ones', () => {
