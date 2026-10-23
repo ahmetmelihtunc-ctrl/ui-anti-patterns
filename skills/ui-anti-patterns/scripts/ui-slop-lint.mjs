@@ -115,7 +115,7 @@ export const DEFAULTS = {
   maxCapsLabels: 3,
   maxAccentPerFile: 8,
   accentTokens: ['accent', 'brand', 'primary'],
-  buzzwords: ['seamless(?:ly)?', 'robust', 'leverag(?:e|es|ed|ing)', 'unlock(?:s|ed|ing)?', 'empower(?:s|ed|ing)?', 'game-changing', 'cutting-edge', 'next-gen(?:eration)?', 'revolutioni[sz](?:e|es|ed|ing)', 'supercharg(?:e|es|ed|ing)', 'state-of-the-art', 'best-in-class', 'world-class', 'turnkey', 'synerg(?:y|ies)', 'holistic', 'effortless(?:ly)?', 'blazing[- ]fast', 'all-in-one', 'streamlin(?:e|es|ed|ing)', 'harness(?:es|ed|ing)?'],
+  buzzwords: ['seamless(?:ly)?', 'robust', 'leverag(?:e|es|ed|ing)', 'unlock(?:s|ed|ing)?(?= (?:your|the|new|more|full|insights|potential|value|power))', 'empower(?:s|ed|ing)?', 'game-changing', 'cutting-edge', 'next-gen(?:eration)?', 'revolutioni[sz](?:e|es|ed|ing)', 'supercharg(?:e|es|ed|ing)', 'state-of-the-art', 'best-in-class', 'world-class', 'turnkey', 'synerg(?:y|ies)', 'holistic', 'effortless(?:ly)?', 'blazing[- ]fast', 'all-in-one', 'streamlin(?:e|es|ed|ing)', 'harness(?:es|ed|ing)?(?= (?:the|your|ai|data|power))'],
   buzzwordsExclude: [],
   touchTargets: true,
   maxPunctPerFile: 6,
@@ -375,7 +375,7 @@ export const RULES = [
       const L = ctx.lines, heads = [];
       L.forEach((l, i) => {
         if (!/<h[34]\b/.test(l)) return;
-        const before = L.slice(Math.max(0, i - 8), i).join('\n'), after = L.slice(i + 1, i + 5).join('\n');
+        const before = L.slice(Math.max(0, i - 8), i).join('\n') + '\n' + l.slice(0, l.indexOf('<h')), after = l.slice(l.indexOf('<h')) + '\n' + L.slice(i + 1, i + 5).join('\n');
         if (/<svg|<[A-Z]\w*Icon\b|<Icon\b|lucide|<i\s+class|\{[\w.]*icon\}/i.test(before) && /<p\b|<Text\b/.test(after)) heads.push(i);
       });
       const out = [];
@@ -740,7 +740,7 @@ export const RULES = [
     scan(ctx) {
       const out = eachLine(ctx, (l) => (/\banimate-(?:float|floating|bounce)\b/.test(l) ? 'ambient float or bounce utility' : /animation(?:-name)?\s*:[^;]*\b(?:float|floating|bob|levitate|drift)\w*\b[^;]*\binfinite\b/i.test(l) ? 'infinite floating animation' : null));
       const names = [...ctx.text.matchAll(/@keyframes\s+([\w-]+)\s*\{([\s\S]*?\})\s*\}/g)].filter((m) => /translate(?:Y|3d)?\(/i.test(m[2]) && !/rotate|scale|opacity/i.test(m[2]));
-      for (const k of names) if (new RegExp(`animation[^;]*\\b${k[1]}\\b[^;]*infinite|animation[^;]*infinite[^;]*\\b${k[1]}\\b`).test(ctx.text) && !/spin|load|skeleton|pulse|shimmer/i.test(k[1])) out.push({ line: ctx.lineOf(k.index), msg: `keyframes ${k[1]} moves an element up and down forever` });
+      for (const k of names) if (new RegExp(`animation[^;]*\\b${k[1]}\\b[^;]*infinite|animation[^;]*infinite[^;]*\\b${k[1]}\\b`).test(ctx.text) && !/spin|load|skeleton|pulse|shimmer|float|bob|levitate|drift/i.test(k[1])) out.push({ line: ctx.lineOf(k.index), msg: `keyframes ${k[1]} moves an element up and down forever` });
       return out;
     },
   },
